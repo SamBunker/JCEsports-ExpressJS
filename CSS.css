@@ -1,5 +1,13 @@
+.header {
+  padding: 60px;
+  text-align: center;
+  background: #0C1E3D;
+  color: white;
+  font-size: 30px;
+}
+
 .navbar {
-    background-color: #0C1E3D;
+    background-color: #AC9C66;
     width: 85%;
     overflow: auto;
     text-align: center;
@@ -10,12 +18,12 @@
   /* Style the links inside the navigation bar */
   .navbar a {   
     float: left;
-    color: #f2f2f2;
+    color: white;
     text-align: center;
     padding: 16px 16px;
     text-decoration: none;
     font-size: 20px;
-    width: 14%;
+    width: 13%;
     @include border-radius(2px);
         &:hover{
           @include box-shadow(0 0 0 1px #fff);
