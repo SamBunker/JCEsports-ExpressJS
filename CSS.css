@@ -1,9 +1,5 @@
 .header {
-  padding: 60px;
-  text-align: center;
   background: #0C1E3D;
-  color: white;
-  font-size: 30px;
 }
 
 .navbar {
@@ -39,22 +35,6 @@
   
   /* Add a color to the active/current link */
   .navbar a.active {
-    background-color: #AC9C66;
+    background-color: 041f5c;
     color: white;
   }
-  /* Page content */
-.content {
-  padding: 16px;
-}
-
-/* The sticky class is added to the navbar with JS when it reaches its scroll position */
-.sticky {
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
-
-/* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
-.sticky + .content {
-  padding-top: 60px;
-}
