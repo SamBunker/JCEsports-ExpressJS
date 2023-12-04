@@ -1,40 +1,172 @@
 .header {
   background: #0C1E3D;
 }
+body {
+  margin: 0;
+  padding: 0;
+}
+
+div.sticky {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+}
+img.nav-logo {
+  float: left; /* Use float property for left alignment */
+  margin-right: -10px; /* Add some margin to the right of the image */
+  margin-left: -20px;
+}
 
 .navbar {
     background-color: #AC9C66;
-    width: 85%;
-    overflow: auto;
-    text-align: center;
-    margin:auto;
-    position:center;
+    width: 100%;
+    overflow: hidden;
+    text-align: left;
+    position: fixed;
+    display: block;
   }
-  
-  /* Style the links inside the navigation bar */
-  .navbar a {   
-    float: left;
-    color: white;
-    text-align: center;
-    padding: 16px 16px;
-    text-decoration: none;
-    font-size: 20px;
-    width: 13%;
-    @include border-radius(2px);
-        &:hover{
-          @include box-shadow(0 0 0 1px #fff);
-        }
-    
+  /* Navbar styles */
+
+.nav-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list li {
+  float: left;
+  margin-top: 15px;
+  margin-left: -10px;
+}
+
+.nav-list li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px; /* Adjust padding to change button size */
+  text-decoration: none;
+  font-size: 25px;
+}
+
+/* Add some spacing between navbar buttons */
+.nav-list li + li {
+  margin-left: 0px; /* Adjust margin to change space between buttons */
+}
+
+/* Change color on hover */
+.nav-list li a:hover {
+  background-color: #0C1E3D;
+  color: #f2f2f2;
+}
+
+.nav-list li a.active {
+  background-color: #0C1E3D;
+  color: #f2f2f2;
+}
+
+/*Discord inv, communication, and main academic website bar 
+.communication {
+  position: sticky;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+*/
+/*Communications bar at top of index */
+.breadcrumbs {
+  margin: 0 0 1rem 0;
+  list-style: none; }
+  .breadcrumbs::before, .breadcrumbs::after {
+      display: table;
+      content: ' ';
+      -ms-flex-preferred-size: 0;
+          flex-basis: 0;
+      -ms-flex-order: 1;
+          order: 1; }
+  .breadcrumbs::after {
+      clear: both; }
+  .breadcrumbs li {
+      float: left;
+      font-size: 0.6875rem;
+      color: #0a0a0a;
+      cursor: default;
+      text-transform: uppercase; }
+      .breadcrumbs li:not(:last-child)::after {
+      position: relative;
+      margin: 0 0.75rem;
+      opacity: 1;
+      content: "/";
+      color: #cacaca; }
+  .breadcrumbs a {
+      color: #2ba6cb; }
+      .breadcrumbs a:hover {
+      text-decoration: underline; }
+  .breadcrumbs .disabled {
+      color: #cacaca;
+      cursor: not-allowed; }
+
+span {
+  background-color:#0C1E3D;
+}
+
+
+/*-Image Carousel-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+}
+.mySlides {
+  display: none;
+}
+
+img {
+  vertical-align: middle;
+}
+
+/* Slideshow container */
+.slideshow-container {
+  position: relative;
+  margin: auto;
+  width: 50%;
+  height: 400px; /* Adjust the height as needed */
+  overflow: hidden;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: ease-in-out;
+  animation-duration: 2s;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.4;
   }
-  
-  /* Change the color of links on hover */
-  .navbar a:hover {   
-    background-color: #AC9C66;
-    color: #0C1E3D;
+
+  to {
+    opacity: 1;
   }
-  
-  /* Add a color to the active/current link */
-  .navbar a.active {
-    background-color: 041f5c;
-    color: white;
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .text {
+    font-size: 11px;
   }
+}
