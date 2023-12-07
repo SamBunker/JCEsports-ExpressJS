@@ -5,9 +5,12 @@ const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const passport = require('passport');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+// Render Engines
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set('port', process.env.PORT || 3000);
@@ -21,30 +24,56 @@ const connection = mysql.createConnection({
     database: 'esports'
   });
   
-  connection.connect((err) => {
-    if (err) {
-      console.error('Error connecting to MySQL:', err);
-      return;
-    }
-    console.log('Connected to MySQL database');
-  });
-  
-app.get('/admin', (req, res) => {
-    res.render('admin');
+connection.connect((err) => {
+if (err) {
+    console.error('Error connecting to MySQL:', err);
+    return;
+}
+console.log('Connected to MySQL database');
 });
 
-app.get('/teamlist', (req, res) => {
-    res.render('teamlist');
-});
+function renderTemplate(req, res, next) {
+const template = req.path.slice(1);
+res.render(template);
+}
 
-app.get('/about', (req, res) => {
-    res.render('about');
-});
+app.get('/admin', renderTemplate);
+app.get('/teamlist', renderTemplate);
+app.get('/about', renderTemplate);
+app.get('/register', renderTemplate);
+app.get('/login', renderTemplate);
 
-app.get('/register', (req, res) => {
-    res.render('register');
-});
+// USER LOGIN
+app.post('/login', (req, res) => {
+    const emailExistsQuery = 'SELECT * FROM users WHERE email = ?';
+    const sanitizedEmail = sanitizeInput(req.body.email);
+    connection.query(emailExistsQuery, [sanitizedEmail], (err, results) => {
+        if (err) {
+            res.send("Error parsing database for email.");
+        } else if (results.length === 0) {
+            console.error('Email not found');
+            res.status(401).send('Incorrect email or password.');
+        } else {
+            const user = results[0];
+            const hash = user.password;
+      
+            bcrypt.compare(sanitizeInput(req.body.password), hash, (err, result) => {
+              if (err) {
+                console.error('Error comparing passwords:', err);
+                res.status(500).send('Internal server error.');
+              } else if (result) {
+                console.log('Login successful');
+                // Implement session management and redirect to success page
+              } else {
+                console.error('Incorrect password');
+                res.status(401).send('Incorrect email or password.');
+              }
+            });
+          }
+        });
+      });
 
+// USER REGISTRATION
 app.post('/register', (req, res) => {
     const emailExistsQuery = 'SELECT * FROM users WHERE email = ?';
     const sanitizedEmail = sanitizeInput(req.body.email);
@@ -72,15 +101,15 @@ app.post('/register', (req, res) => {
                     return;
                 }
                 res.status(200).send("Registration Successful");
-                });
             });
         });
+      });
     }
-});});
+  });
+});
 
-// Define route to handle form submission
+// ADMIN DASHBOARD
 app.post('/admin', (req, res) => {
-    // Insert the email into the database
     const sql = 'INSERT INTO players (number, name, gamertag, team, position, grade, hometown_highschool, country_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     connection.query(sql, [sanitizeInput(req.body.playernumber), sanitizeInput(req.body.playername), sanitizeInput(req.body.playergamertag), 
         sanitizeInput(req.body.playerteam), sanitizeInput(req.body.playerposition), sanitizeInput(req.body.playergrade), 
