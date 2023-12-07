@@ -1,7 +1,9 @@
 const express = require('express');
+// const connection = require('./js/db');
+// const adminBro = require('admin-bro');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
-const mysql = require('mysql');
+// const mysql = require('mysql');
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
@@ -10,24 +12,26 @@ app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set('port', process.env.PORT || 3000);
 
-// Connect to MySQL database
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'esports'
-});
+// const AdminBroOptions = {
+//     databases: [connection],
+//     resources: [], // Define your resource objects here
+//   };
+// const admin = new adminBro(AdminBroOptions);
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
-  }
-  console.log('Connected to MySQL database');
-});
+// connection.connect((err) => {
+//   if (err) {
+//     console.error('Error connecting to MySQL:', err);
+//     return;
+//   }
+//   console.log('Connected to MySQL database');
+// });
 
 app.get('/teamlist', (req, res) => {
     res.render('teamlist');
+});
+
+app.get('/about', (req, res) => {
+    res.render('about');
 });
 
 // Define route to handle form submission
@@ -66,6 +70,8 @@ app.use((req, res) => {
     res.status(404).send('404 - Not found');
 });
 
+// app.use(admin.router);
+// https://beta.adminbro.com/docs.html
 
 app.listen(app.get('port'), function() {
     console.log('Started express app on http://localhost:' +
