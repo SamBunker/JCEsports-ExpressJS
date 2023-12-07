@@ -207,3 +207,21 @@ img.aspect-ratio-box {
   width: 100%;
   object-fit: cover; /* Ensure the image covers the entire container */
 }
+
+/*Team list table*/
+table {
+  width: 90%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin: auto;
+}
+
+th, td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
