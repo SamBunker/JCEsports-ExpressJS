@@ -1,0 +1,25 @@
+<header>
+    <h1>Registration</h1>
+</header>
+<br><br><br>
+<div class="container">
+    <form action="/register" method="POST">
+        <fieldset>
+            <label for="username">Username: </label>
+            <input type="text" name="username" id="username" required>
+
+            <label for="password">Password: </label>
+            <input type="text" name="password" id="password" required>
+
+            <label for="email">Email: </label>
+            <input type="email" name="email" id="email" required>
+
+            <input type="hidden" name="authority" value="member">
+
+            <button type="reset">Reset</button>
+            <button type="submit">Submit</button>
+        </fieldset>
+    </form>
+</div>
+<br><br>
+<a href="/login">login</a>
