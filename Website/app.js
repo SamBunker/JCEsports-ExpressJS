@@ -30,6 +30,10 @@ app.get('/teamlist', (req, res) => {
     res.render('teamlist');
 });
 
+app.get('/about', (req, res) => {
+    res.render('about');
+});
+
 // Define route to handle form submission
 app.post('/teamlist', (req, res) => {
     const email = req.body.email;
