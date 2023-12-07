@@ -135,21 +135,6 @@ span {
   box-sizing: border-box;
 }
 
-.mySlides {
-  display: none;
-}
-
-/* The dots/bullets/indicators */
-.dot {
-  height: 15px;
-  width: 15px;
-  margin: 0 2px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-  transition: background-color 0.6s ease;
-}
-
 .active {
   background-color: #717171;
 }
@@ -177,28 +162,6 @@ span {
   }
 }
 
-/*Setting aspect ratio limits for the carousel*/
-.aspect-ratio-box {
-  position: relative;
-  width: 60%;
-  height: 0;
-  padding-bottom: 56.25%;
-  overflow: hidden;
-  margin: auto;
-  max-height: 100px;
-}
-
-img.aspect-ratio-box {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 100%;
-  width: 100%;
-  object-fit: cover; /* Ensure the image covers the entire container */
-}
-
 /*Team list table*/
 table {
   width: 90%;
@@ -208,11 +171,56 @@ table {
 }
 
 th, td {
-  border: 1px solid #dddddd;
+  border: 1px solid black;
   text-align: left;
-  padding: 8px;
+  padding: 0.8em;
 }
 
 th {
   background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color:#AC9C66;
+}
+
+.row>* {
+  padding: 0;
+  /* height: 300px;
+  width: auto; */
+}
+
+.row>img {
+  cursor: pointer;
+  transition: 0.25s ease-in-out;
+  border: 0px inset white;
+}
+
+.row>img:hover {
+  border: 10px inset white;
+}
+
+.float-r {
+  float: right;
+}
+
+
+/*About Meet the Staff*/
+.container {
+  text-align: center;
+  margin: 0;
+}
+
+.image-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0; /* No margin between images */
+}
+
+.centered-text {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }

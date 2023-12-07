@@ -34,7 +34,7 @@
   .nav-list li {
     float: left;
     margin-left: -10px;
-     
+    margin-top: 1em;
   }
 
   .nav-list span {
