@@ -15,7 +15,6 @@ app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set('port', process.env.PORT || 3000);
 
-
 // Connect to MySQL database
 const connection = mysql.createConnection({
     host: 'localhost',
