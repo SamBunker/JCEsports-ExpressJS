@@ -45,15 +45,15 @@ div.sticky {
 
 .nav-list li {
   float: left;
-  margin-top: 15px;
-  margin-left: -10px;
+  margin-top: 30em;
+  margin-left: -10em;
 }
 
 .nav-list li a {
   display: block;
   color: white;
   text-align: center;
-  padding: 14px 16px;
+  padding: 14em 16em;
   /* Adjust padding to change button size */
   text-decoration: none;
   font-size: 25px;
@@ -61,7 +61,7 @@ div.sticky {
 
 /* Add some spacing between navbar buttons */
 .nav-list li+li {
-  margin-left: 0px;
+  margin-left: 0em;
   /* Adjust margin to change space between buttons */
 }
 
@@ -76,15 +76,6 @@ div.sticky {
   color: #f2f2f2;
 }
 
-/*Discord inv, communication, and main academic website bar 
-.communication {
-  position: sticky;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
-*/
 /*Communications bar at top of index */
 .breadcrumbs {
   margin: 0 0 1rem 0;
