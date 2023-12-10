@@ -7,13 +7,25 @@ const saltRounds = 10;
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
+const User = require('./models/user');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+const crypto = require('crypto');
+const secretKey = crypto.randomBytes(32).toString('hex');
 
 // Render Engines
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set('port', process.env.PORT || 3000);
+
+app.use(session({
+    secret: secretKey,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 // 1 day
+    }
+  }));
 
 // Connect to MySQL database
 const connection = mysql.createConnection({
@@ -31,16 +43,78 @@ if (err) {
 console.log('Connected to MySQL database');
 });
 
+function isUserValid(req, res, next) {
+    try {
+        if (!req.session.user || typeof req.session.user !== 'object') {
+            throw new Error('Invalid user session!');
+        }
+        next();
+    } catch (error) {
+        console.error(error.message);
+        res.status(401).redirect('/login');
+    }
+}
+
+async function getPlayers(connection) {
+    const query = 'SELECT * FROM players WHERE id = ?';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+        } else if (results === 0) {
+            console.log('No tables found!');
+        }
+        let players = [];
+        for (const row of results) {
+            players.push(row);
+        }
+        return players;
+    });
+}
+
+function generateTable(players) {
+    let table = '<table>';
+    table += '<tr>';
+// Add table headers
+    for (const key in players[0]) {
+        table += `<th>${key}</th>`;
+    }
+    table += '</tr>';
+    // Add table rows
+    for (const player of players) {
+        table += '<tr>';
+        for (const value of Object.values(player)) {
+            table += `<td>${value}</td>`;
+    }
+        table += '</tr>';
+    }
+    table += '</table>';
+    return table;
+}
+
+app.get('/teamlist', async (req, res) => {
+    try {
+      const players = await getPlayers(connection);
+      const table = generateTable(players);
+      res.render('teamlist', { table });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+
 function renderTemplate(req, res, next) {
 const template = req.path.slice(1);
 res.render(template);
 }
 
-app.get('/admin', renderTemplate);
-app.get('/teamlist', renderTemplate);
+app.get('/admin', isUserValid, renderTemplate);
+// app.get('/teamlist', renderTemplate);
 app.get('/about', renderTemplate);
 app.get('/register', renderTemplate);
 app.get('/login', renderTemplate);
+app.get('/history', renderTemplate);
+app.get('/teamschedule', renderTemplate);
+app.get('/awards', renderTemplate);
 
 // USER LOGIN
 app.post('/login', (req, res) => {
@@ -61,7 +135,15 @@ app.post('/login', (req, res) => {
                 console.error('Error comparing passwords:', err);
                 res.status(500).send('Internal server error.');
               } else if (result) {
+                const userInstance = new User({
+                    id: user.id,
+                    email: user.email,
+                    authority: user.authority
+                });
                 console.log('Login successful');
+                req.session.user = userInstance;
+                res.redirect('/');
+
                 // Implement session management and redirect to success page
               } else {
                 console.error('Incorrect password');
