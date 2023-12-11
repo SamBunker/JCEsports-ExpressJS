@@ -39,6 +39,9 @@ body {
     padding-top: 0.5em;
     padding-left: 1em;
     padding-right: 2em;
+    padding-bottom: 0.5em;
+    position:sticky;
+    top:0;
 }
 
 .breadcrumbs>button {
@@ -47,7 +50,6 @@ body {
     padding: 0.25em 1em 0.25em 1em;
     border: 0px inset white;
     transition: 0.25s ease-in-out;
-    position: sticky;
 }
 
 .breadcrumbs>button:hover {
