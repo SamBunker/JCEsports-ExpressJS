@@ -56,26 +56,51 @@ function isUserValid(req, res, next) {
 }
 
 async function getPlayers(connection) {
-    const query = 'SELECT * FROM players WHERE id = ?';
-    connection.query(query, (err, results) => {
+    let players = [];
+    const sql = 'SELECT * FROM players';
+    connection.query(sql, (err, results) => {
         if (err) {
             console.log(err);
         } else if (results === 0) {
             console.log('No tables found!');
         }
-        let players = [];
-        for (const row of results) {
-            players.push(row);
+        for (const item of results) {
+            players.push(item);
+            console.log(players);
+            // for (const key in item) {
+                // players.push(item[key]);
+                // console.log(key, ': ', item[key]);
+            // }
         }
+        console.log(players);
+        // console.log(results[i]);
+        // let players = [];
+        // for (i in results[0]) {
+        //     console.log(i, i[i]);
+            // for (let n = 0; n < i.length; n++) {
+            //     const row = i[n];
+            //     console.log(row);
+            // i.indexOf
+            // for (entry in i) {
+            //     // players.push(entry);
+            //     console.log(entry);
+            // }
+            // console.log(results[i]);
+        // }
+        // console.log(players);
+        // for (const row of results) {
+        //     players.push(row);
+        // }
         return players;
     });
 }
 
-function generateTable(players) {
+async function generateTable(players) {
     let table = '<table>';
     table += '<tr>';
 // Add table headers
-    for (const key in players[0]) {
+    for (key in players[0]) {
+        console.log(key);
         table += `<th>${key}</th>`;
     }
     table += '</tr>';
