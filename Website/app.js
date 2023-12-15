@@ -55,8 +55,8 @@ function isUserValid(req, res, next) {
     }
 }
 
+let players = [];
 async function getPlayers(connection) {
-    let players = [];
     const sql = 'SELECT * FROM players';
     connection.query(sql, (err, results) => {
         if (err) {
@@ -64,15 +64,36 @@ async function getPlayers(connection) {
         } else if (results === 0) {
             console.log('No tables found!');
         }
+        // Generate the table for the page'
+        let table = '<table>';
+        table += '<tr>';
+        // Add table headers
+        for (key in players) {
+            console.log(key);
+            table += `<th>${key}</th>`;
+        }
+        table += '</tr>';
+        // Add table rows
+        for (const player of players) {
+            table += '<tr>';
+            for (const value of Object.values(player)) {
+                table += `<td>${value}</td>`;
+            }
+            table += '</tr>';
+        }
+        table += '</table>';
+
+
+
         for (const item of results) {
             players.push(item);
-            console.log(players);
+            // console.log(players);
             // for (const key in item) {
                 // players.push(item[key]);
                 // console.log(key, ': ', item[key]);
             // }
         }
-        console.log(players);
+        // console.log(players);
         // console.log(results[i]);
         // let players = [];
         // for (i in results[0]) {
@@ -91,35 +112,13 @@ async function getPlayers(connection) {
         // for (const row of results) {
         //     players.push(row);
         // }
-        return players;
+        return table;
     });
-}
-
-async function generateTable(players) {
-    let table = '<table>';
-    table += '<tr>';
-// Add table headers
-    for (key in players[0]) {
-        console.log(key);
-        table += `<th>${key}</th>`;
-    }
-    table += '</tr>';
-    // Add table rows
-    for (const player of players) {
-        table += '<tr>';
-        for (const value of Object.values(player)) {
-            table += `<td>${value}</td>`;
-    }
-        table += '</tr>';
-    }
-    table += '</table>';
-    return table;
 }
 
 app.get('/teamlist', async (req, res) => {
     try {
-      const players = await getPlayers(connection);
-      const table = generateTable(players);
+      const table = await getPlayers(connection);
       res.render('teamlist', { table });
     } catch (error) {
       console.error(error);
