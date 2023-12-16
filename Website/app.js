@@ -55,7 +55,7 @@ function isUserValid(req, res, next) {
     }
 }
 
-let players = [];
+
 async function getPlayers(connection) {
     const sql = 'SELECT * FROM players';
     connection.query(sql, (err, results) => {
@@ -64,62 +64,48 @@ async function getPlayers(connection) {
         } else if (results === 0) {
             console.log('No tables found!');
         }
-        // Generate the table for the page'
         let table = '<table>';
-        table += '<tr>';
-        // Add table headers
-        for (key in players) {
-            console.log(key);
-            table += `<th>${key}</th>`;
-        }
+        table += '<thead>';
+        table += '<tr style="background-color: #0C1E3D;">';
+        table += '<th>Id</th>'
+        table += '<th>Number</th>'
+        table += '<th>Name</th>'
+        table += '<th>Gamertag</th>'
+        table += '<th>Team</th>'
+        table += '<th>Position</th>'
+        table += '<th>Grade</th>'
+        table += '<th>Hometown/High School</th>'
+        table += '<th>Country</th>'
         table += '</tr>';
-        // Add table rows
-        for (const player of players) {
+        table += '</thead>';
+        table += '<tbody>';
+
+        for (const item of results) {
             table += '<tr>';
-            for (const value of Object.values(player)) {
-                table += `<td>${value}</td>`;
+            for (const key in item) {
+                table += `<td>${item[key]}</td>`;
             }
             table += '</tr>';
         }
+        table += '</tbody>';
         table += '</table>';
 
-
-
-        for (const item of results) {
-            players.push(item);
-            // console.log(players);
-            // for (const key in item) {
-                // players.push(item[key]);
-                // console.log(key, ': ', item[key]);
-            // }
-        }
-        // console.log(players);
-        // console.log(results[i]);
-        // let players = [];
-        // for (i in results[0]) {
-        //     console.log(i, i[i]);
-            // for (let n = 0; n < i.length; n++) {
-            //     const row = i[n];
-            //     console.log(row);
-            // i.indexOf
-            // for (entry in i) {
-            //     // players.push(entry);
-            //     console.log(entry);
-            // }
-            // console.log(results[i]);
-        // }
-        // console.log(players);
-        // for (const row of results) {
-        //     players.push(row);
-        // }
+        console.log('Generated table:', table);
         return table;
     });
 }
 
 app.get('/teamlist', async (req, res) => {
     try {
-      const table = await getPlayers(connection);
-      res.render('teamlist', { table });
+    //   const table = await getPlayers(connection);
+      res.render("teamlist", { 
+        message: getPlayers(connection),
+        helpers: {
+            teamlist: function (message) {
+                return ('"' + message + '"');
+            }
+        }
+    });
     } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');
@@ -127,8 +113,8 @@ app.get('/teamlist', async (req, res) => {
   });
 
 function renderTemplate(req, res, next) {
-const template = req.path.slice(1);
-res.render(template);
+    const template = req.path.slice(1);
+    res.render(template);
 }
 
 app.get('/admin', isUserValid, renderTemplate);
