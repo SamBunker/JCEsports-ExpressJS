@@ -1,15 +1,18 @@
 const express = require('express');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
-const mysql = require('mysql');
+const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers } = require('./dynamo');
+const mysql = require('mysql'); // Will phase this out for Dynamodb
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const passport = require('passport');
+// const passport = require('passport');
 const User = require('./models/user');
+const { v4: uuidv4 } = require('uuid');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(express.json());
 const crypto = require('crypto');
 const secretKey = crypto.randomBytes(32).toString('hex');
 
@@ -27,6 +30,93 @@ app.use(session({
     }
   }));
 
+app.get('/students', async (req, res) => {
+    try {
+        const students = await getStudents();
+        res.json(students);
+    } catch (error) {
+        console.error(err);
+        res.status(500).json({err: 'Something went wrong'});
+    }
+});
+
+app.get('/users', async (req, res) => {
+    try {
+        const users = await getUsers();
+        res.json(users);
+    } catch (error) {
+        console.error(err);
+        res.status(500).json({err: 'Something went wrong'});
+    }
+});
+
+// app.get('/students/test', async (req, res) => {
+//     try {
+//         const students = await getStudents();
+//         data_list = json.loads(students);
+//         for (person in data_list) {
+//             if ("Sam" in person["name"].lower()) {
+//                 res.json(person);
+//                 break;
+//             } else {
+//                 res.message("No user found by that name!");
+//             }
+//         } 
+//         // res.json(students);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({error: 'Something went wrong'});
+//     }
+// });
+
+app.get('/students/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const students = await getStudentById(id);
+        res.json(students);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'Something went wrong'});
+    }
+});
+
+app.post('/students', async (req, res) => {
+    const student = req.body;
+    try {
+        const newStudent = await addOrUpdateStudent(student);
+        res.json(newStudent);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'Something went wrong'});
+    }
+});
+
+app.put('/students/:id', async (req, res) => {
+    const student = req.body;
+    const {id} = req.params;
+    student.id = id;
+    try {
+        const updatedStudent = await addOrUpdateStudent(student);
+        res.json(updatedStudent);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'Something went wrong'});
+    }
+});
+
+app.delete('/students/:id', async (req, res) => {
+    const {id} = req.params;
+    try {
+        res.json(await deleteStudent(id));
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'Something went wrong'});
+    }
+})
+
+
+// WILL BE PHASED OUT //
+// WILL BE PHASED OUT //
 // Connect to MySQL database
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -42,6 +132,8 @@ if (err) {
 }
 console.log('Connected to MySQL database');
 });
+// WILL BE PHASED OUT //
+// WILL BE PHASED OUT //
 
 function isUserValid(req, res, next) {
     try {
@@ -55,69 +147,40 @@ function isUserValid(req, res, next) {
     }
 }
 
-
-async function getPlayers(connection) {
-    const sql = 'SELECT * FROM players';
-    connection.query(sql, (err, results) => {
-        if (err) {
-            console.log(err);
-        } else if (results === 0) {
-            console.log('No tables found!');
-        }
-        let table = '<table>';
-        table += '<thead>';
-        table += '<tr style="background-color: #0C1E3D;">';
-        table += '<th>Id</th>'
-        table += '<th>Number</th>'
-        table += '<th>Name</th>'
-        table += '<th>Gamertag</th>'
-        table += '<th>Team</th>'
-        table += '<th>Position</th>'
-        table += '<th>Grade</th>'
-        table += '<th>Hometown/High School</th>'
-        table += '<th>Country</th>'
-        table += '</tr>';
-        table += '</thead>';
-        table += '<tbody>';
-
-        for (const item of results) {
-            table += '<tr>';
-            for (const key in item) {
-                table += `<td>${item[key]}</td>`;
-            }
-            table += '</tr>';
-        }
-        table += '</tbody>';
-        table += '</table>';
-
-        console.log('Generated table:', table);
-        return table;
-    });
-}
-
-app.get('/teamlist', async (req, res) => {
+// Does user have auth for admin panel
+function hasAuth(req, res, next) {
     try {
-    //   const table = await getPlayers(connection);
-      res.render("teamlist", { 
-        message: getPlayers(connection),
-        helpers: {
-            teamlist: function (message) {
-                return ('"' + message + '"');
-            }
-        }
-    });
+        const user = req.session.user;
+        const auth = user.auth;
+
+        if (auth !== "admin") { // Pull the user session auth
+            throw new Error("Unauthorized Access! Admin Priviledges Required.");
+            res.status(401).redirect('/');
+        } 
+        next();
     } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
+        console.error(error.message);
+        res.status(401).redirect('/login');
     }
-  });
+}
+// app.get('/teamlist', async (req, res) => {
+//     try {
+//       const table = await getPlayers(connection);
+//       res.render("teamlist", { list: async function() {
+//         await getPlayers(connection);
+//       } });
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).send('Internal Server Error');
+//     }
+//   });
 
 function renderTemplate(req, res, next) {
     const template = req.path.slice(1);
     res.render(template);
 }
 
-app.get('/admin', isUserValid, renderTemplate);
+app.get('/admin', isUserValid, hasAuth, renderTemplate);
 // app.get('/teamlist', renderTemplate);
 app.get('/about', renderTemplate);
 app.get('/register', renderTemplate);
@@ -127,76 +190,100 @@ app.get('/teamschedule', renderTemplate);
 app.get('/awards', renderTemplate);
 
 // USER LOGIN
-app.post('/login', (req, res) => {
-    const emailExistsQuery = 'SELECT * FROM users WHERE email = ?';
-    const sanitizedEmail = sanitizeInput(req.body.email);
-    connection.query(emailExistsQuery, [sanitizedEmail], (err, results) => {
-        if (err) {
-            res.send("Error parsing database for email.");
-        } else if (results.length === 0) {
-            console.error('Email not found');
+// app.post('/login', (req, res) => {
+//     const emailExistsQuery = 'SELECT * FROM users WHERE email = ?';
+//     const sanitizedEmail = sanitizeInput(req.body.email);
+//     connection.query(emailExistsQuery, [sanitizedEmail], (err, results) => {
+//         if (err) {
+//             res.send("Error parsing database for email.");
+//         } else if (results.length === 0) {
+//             console.error('Email not found');
+//             res.status(401).send('Incorrect email or password.');
+//         } else {
+//             const user = results[0];
+//             const hash = user.password;
+// console.log(storedPassword);            
+// console.log("Email Found!");
+// res.json(checkEmail);
+
+
+app.post('/login', async (req, res) => {
+    const email = req.body.email;
+    try {
+        const checkEmail = await checkIfEmail(email);
+        if (checkEmail.Count === 0) {
+            console.log("No Email Found");
             res.status(401).send('Incorrect email or password.');
         } else {
-            const user = results[0];
-            const hash = user.password;
-      
-            bcrypt.compare(sanitizeInput(req.body.password), hash, (err, result) => {
-              if (err) {
-                console.error('Error comparing passwords:', err);
-                res.status(500).send('Internal server error.');
-              } else if (result) {
-                const userInstance = new User({
-                    id: user.id,
-                    email: user.email,
-                    authority: user.authority
-                });
-                console.log('Login successful');
-                req.session.user = userInstance;
-                res.redirect('/');
-
-                // Implement session management and redirect to success page
-              } else {
-                console.error('Incorrect password');
-                res.status(401).send('Incorrect email or password.');
-              }
+            const items = checkEmail.Items;
+            const item = items[0];
+            const storedPassword = item.password;
+            bcrypt.compare(sanitizeInput(req.body.password), storedPassword, (err, result) => {
+                if (err) {
+                    console.error('Error comparing passwords:', err);
+                    res.status(500).send('Internal server error.');
+                } else if (result) {
+                    const userInstance = new User({
+                        id: item.id,
+                        email: item.email,
+                        auth: item.auth
+                    });
+                    console.log('Login Successful');
+                    req.session.user = userInstance;
+                    res.redirect('/');
+                } else {
+                    console.error('Incorrect password');
+                    res.status(401).send('Incorrect email or password.');
+                }
             });
-          }
-        });
-      });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'Something went wrong'});
+    }
+});
 
-// USER REGISTRATION
-app.post('/register', (req, res) => {
-    const emailExistsQuery = 'SELECT * FROM users WHERE email = ?';
-    const sanitizedEmail = sanitizeInput(req.body.email);
-    connection.query(emailExistsQuery, [sanitizedEmail], (err, results) => {
-        if (err) {
-            res.send("Error parsing database.");
-        } else if (results.length > 0) {
-            res.send('Email already in use.');
+// User Registration (DynamoDB)
+app.post('/register', async (req, res) => {
+    const email = req.body.email;
+    try {
+        const checkEmail = await checkIfEmail(email);
+        if (checkEmail.Count > 0 ) {
+            console.log("Email Already In Table!");
             return;
         } else {
             bcrypt.genSalt(saltRounds, function(err, salt) {
                 bcrypt.hash(sanitizeInput(req.body.password), salt, function(err, hash) {
-                if (err) {
-                    console.error('Error hashing password:', err);
-                    res.status(500).send('Error hashing password!');
-                    return;
-                }
-                const hashPassword = hash;
-
-                const sql = 'INSERT INTO users (username, email, password, authority) VALUES (?, ?, ?, ?)';
-                connection.query(sql, [sanitizeInput(req.body.username), sanitizeInput(req.body.email), hashPassword, req.body.authority], (err, result) => {
-                if (err) {
-                    console.error('Error inserting user:', err);
-                    res.status(500).send('Error!');
-                    return;
-                }
-                res.status(200).send("Registration Successful");
-            });
-        });
-      });
+                    if (err) {
+                        console.error('Error hashing password:', err);
+                        res.status(500).send('Error hashing password!');
+                        return;
+                    }
+                    const hashPassword = hash;
+                    const id = uuidv4();
+                    const userRegister = {
+                        // id: id, To get total IDs, Grab the total scan of all, -1 and set that as the string for ID.
+                        id: id,
+                        email: email,
+                        password: hashPassword,
+                        username: sanitizeInput(req.body.username),
+                        auth: "user"
+                    };
+                    
+                    try {
+                        addOrUpdateRegistration(userRegister);
+                        res.status(200).send("Registration Successful");
+                    } catch (error) {
+                        console.error(error);
+                        res.status(500).json({error: 'Error inserting user!'});
+                    }
+                });
+            })
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'Something went wrong.'});
     }
-  });
 });
 
 // ADMIN DASHBOARD
@@ -229,9 +316,6 @@ app.use((req, res) => {
     res.status(404).send('404 - Not found');
 });
 
-// app.use(admin.router);
-// https://beta.adminbro.com/docs.html
-
 app.listen(app.get('port'), function() {
     console.log('Started express app on http://localhost:' +
         app.get('port') + '; press Ctrl-C to terminate.');
@@ -239,4 +323,4 @@ app.listen(app.get('port'), function() {
 
 function sanitizeInput(input) {
     return input.replace(/[^a-zA-Z0-9\-\_\.\@]/g, '');
-  }
+}

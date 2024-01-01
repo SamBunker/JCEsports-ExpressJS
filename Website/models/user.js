@@ -1,6 +1,6 @@
 function User(userObj) {
     this.id = userObj.id;
     this.email = userObj.email;
-    this.authority = userObj.authority;
+    this.auth = userObj.auth;
 }
 module.exports = User;
