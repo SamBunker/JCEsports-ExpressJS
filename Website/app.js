@@ -40,7 +40,7 @@ app.get('/students', async (req, res) => {
     }
 });
 
-app.get('/users', async (req, res) => {
+app.get('/users', isUserValid, hasAuth, async (req, res) => {
     try {
         const users = await getUsers();
         res.json(users);
@@ -49,25 +49,6 @@ app.get('/users', async (req, res) => {
         res.status(500).json({err: 'Something went wrong'});
     }
 });
-
-// app.get('/students/test', async (req, res) => {
-//     try {
-//         const students = await getStudents();
-//         data_list = json.loads(students);
-//         for (person in data_list) {
-//             if ("Sam" in person["name"].lower()) {
-//                 res.json(person);
-//                 break;
-//             } else {
-//                 res.message("No user found by that name!");
-//             }
-//         } 
-//         // res.json(students);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({error: 'Something went wrong'});
-//     }
-// });
 
 app.get('/students/:id', async (req, res) => {
     const id = req.params.id;
@@ -188,24 +169,6 @@ app.get('/login', renderTemplate);
 app.get('/history', renderTemplate);
 app.get('/teamschedule', renderTemplate);
 app.get('/awards', renderTemplate);
-
-// USER LOGIN
-// app.post('/login', (req, res) => {
-//     const emailExistsQuery = 'SELECT * FROM users WHERE email = ?';
-//     const sanitizedEmail = sanitizeInput(req.body.email);
-//     connection.query(emailExistsQuery, [sanitizedEmail], (err, results) => {
-//         if (err) {
-//             res.send("Error parsing database for email.");
-//         } else if (results.length === 0) {
-//             console.error('Email not found');
-//             res.status(401).send('Incorrect email or password.');
-//         } else {
-//             const user = results[0];
-//             const hash = user.password;
-// console.log(storedPassword);            
-// console.log("Email Found!");
-// res.json(checkEmail);
-
 
 app.post('/login', async (req, res) => {
     const email = req.body.email;
