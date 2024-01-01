@@ -279,4 +279,5 @@ function sanitizeInput(input) {
 }
 
 // TODO:
-// Make sure that the Admin href is showing if the user is logged in and has access from their auth
+// Make sure that the Admin href is showing if the user is logged in and has access from their auth.
+// Make the email login not case sensitive.
