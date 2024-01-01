@@ -29,34 +29,6 @@ const getUsers = async () => {
     return users;
 }
 
-// const getUserLoginByEmail = async (email) => {
-//     const params = { 
-//         TableName: TABLE_NAME,
-//         AttributeDefinitions: [
-//             {
-//                 AttributeName: 'email',
-//                 AttributeType: 's'
-
-//             }
-//         ],
-//         KeySchema: [
-//             {
-//                 AttributeName: 'email',
-//                 KeyType: 'HASH'
-
-//             }
-//         ],
-//         BillingMode: 'PAY_PER_REQUEST'
-//     };
-//     return await dynamoClient.put(params).promise();
-
-// }
-
-
-
-// Registration Tables
-// Registration Tables
-
 const addOrUpdateRegistration = async (array) => {
     const params = {
         TableName: LOGIN_TABLE,
@@ -103,21 +75,6 @@ const deleteStudent = async (id) => {
     }
     return await dynamoClient.delete(params).promise();
 };
-
-
-
-
-// const check = checkIfEmail("sam@sam.com");
-// check.then(console.log);
-// checkIfEmail("sam@sam.com", (err, results) => {
-//     if (err) {
-//         return console.log("Error!");
-//     } else if (results.length === 0) {
-//         return console.log("No email by that name.");
-//     } else {
-//         return console.log("Email Exists");
-//     }
-// });
 
 module.exports = {
     dynamoClient,

@@ -18,7 +18,13 @@
             <li><a href="/teamschedule">Schedule</a></li>
             <li><a href="/awards">Awards</a></li>
             <li><a href="/history">History</a></li>
-            <span><li><a href="/login">Login</a></li></span>
+            <span>
+              {{#if isLoggedIn}}
+                <li><a href="/admin">Admin</a></li>
+              {{else}}
+                <li><a href="/login">Login</a></li>
+              {{/if}}
+            </span>
         </ul>
     </nav>
 

@@ -29,7 +29,9 @@ app.use(session({
     }
   }));
 
-app.get('/students', async (req, res) => {
+// RENDER TO FETCH INFO FROM DYNAMODB
+// RENDER TO FETCH INFO FROM DYNAMODB
+app.get('/students', isUserValid, hasAuth, async (req, res) => {
     try {
         const students = await getStudents();
         res.json(students);
@@ -49,7 +51,7 @@ app.get('/users', isUserValid, hasAuth, async (req, res) => {
     }
 });
 
-app.get('/students/:id', async (req, res) => {
+app.get('/students/:id', isUserValid, hasAuth, async (req, res) => {
     const id = req.params.id;
     try {
         const students = await getStudentById(id);
@@ -60,7 +62,7 @@ app.get('/students/:id', async (req, res) => {
     }
 });
 
-app.post('/students', async (req, res) => {
+app.post('/students', isUserValid, hasAuth, async (req, res) => {
     const student = req.body;
     try {
         const newStudent = await addOrUpdateStudent(student);
@@ -71,7 +73,7 @@ app.post('/students', async (req, res) => {
     }
 });
 
-app.put('/students/:id', async (req, res) => {
+app.put('/students/:id', isUserValid, hasAuth, async (req, res) => {
     const student = req.body;
     const {id} = req.params;
     student.id = id;
@@ -84,7 +86,7 @@ app.put('/students/:id', async (req, res) => {
     }
 });
 
-app.delete('/students/:id', async (req, res) => {
+app.delete('/students/:id', isUserValid, hasAuth, async (req, res) => {
     const {id} = req.params;
     try {
         res.json(await deleteStudent(id));
@@ -93,6 +95,8 @@ app.delete('/students/:id', async (req, res) => {
         res.status(500).json({error: 'Something went wrong'});
     }
 });
+// RENDER TO FETCH INFO FROM DYNAMODB
+// RENDER TO FETCH INFO FROM DYNAMODB
 
 function isUserValid(req, res, next) {
     try {
@@ -136,7 +140,8 @@ function hasAuth(req, res, next) {
 
 function renderTemplate(req, res, next) {
     const template = req.path.slice(1);
-    res.render(template);
+    const isLoggedIn = req.session.user ? true : false;
+    res.render(template, { isLoggedIn });
 }
 
 app.get('/admin', isUserValid, hasAuth, renderTemplate);
@@ -250,7 +255,8 @@ app.post('/admin', (req, res) => {
 
 // Define route to render the form page
 app.get('/', (req, res) => {
-    res.render('index');
+    const isLoggedIn = req.session.user ? true : false;
+    res.render('index', { isLoggedIn });
 });
 
 //custom 500: Server not Responding
@@ -271,3 +277,6 @@ app.listen(app.get('port'), function() {
 function sanitizeInput(input) {
     return input.replace(/[^a-zA-Z0-9\-\_\.\@]/g, '');
 }
+
+// TODO:
+// Make sure that the Admin href is showing if the user is logged in and has access from their auth
