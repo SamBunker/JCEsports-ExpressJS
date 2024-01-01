@@ -2,7 +2,6 @@ const express = require('express');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
 const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers } = require('./dynamo');
-const mysql = require('mysql'); // Will phase this out for Dynamodb
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const bodyParser = require('body-parser');
@@ -93,28 +92,7 @@ app.delete('/students/:id', async (req, res) => {
         console.error(error);
         res.status(500).json({error: 'Something went wrong'});
     }
-})
-
-
-// WILL BE PHASED OUT //
-// WILL BE PHASED OUT //
-// Connect to MySQL database
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'esports'
-  });
-  
-connection.connect((err) => {
-if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
-}
-console.log('Connected to MySQL database');
 });
-// WILL BE PHASED OUT //
-// WILL BE PHASED OUT //
 
 function isUserValid(req, res, next) {
     try {
@@ -225,7 +203,6 @@ app.post('/register', async (req, res) => {
                     const hashPassword = hash;
                     const id = uuidv4();
                     const userRegister = {
-                        // id: id, To get total IDs, Grab the total scan of all, -1 and set that as the string for ID.
                         id: id,
                         email: email,
                         password: hashPassword,
@@ -251,17 +228,24 @@ app.post('/register', async (req, res) => {
 
 // ADMIN DASHBOARD
 app.post('/admin', (req, res) => {
-    const sql = 'INSERT INTO players (number, name, gamertag, team, position, grade, hometown_highschool, country_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    connection.query(sql, [sanitizeInput(req.body.playernumber), sanitizeInput(req.body.playername), sanitizeInput(req.body.playergamertag), 
-        sanitizeInput(req.body.playerteam), sanitizeInput(req.body.playerposition), sanitizeInput(req.body.playergrade), 
-        sanitizeInput(req.body.playerhometown), sanitizeInput(req.body.country)], (err, result) => {
-        if (err) {
-            console.error('Error inserting email:', err);
-            res.status(500).send('Error!');
-            return;
-        }
-        res.status(200).send('Thank you for submitting');
-    });
+    const playerCreation = {
+        id: uuidv4(),
+        number: sanitizeInput(req.body.playernumber),
+        name: sanitizeInput(req.body.playername),
+        gamertag: sanitizeInput(req.body.playergamertag),
+        team: sanitizeInput(req.body.playerteam),
+        position: sanitizeInput(req.body.playerposition),
+        grade: sanitizeInput(req.body.playergrade),
+        hometown_highschool: sanitizeInput(req.body.playerhometown),
+        country_code: sanitizeInput(req.body.country)
+    }
+    try {
+        addOrUpdateStudent(playerCreation);
+        res.status(200).send("Creation Successful");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'Error inserting student!'});
+    }
 });
 
 // Define route to render the form page
