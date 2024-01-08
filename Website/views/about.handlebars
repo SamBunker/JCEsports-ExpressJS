@@ -1,8 +1,4 @@
 <!doctype <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <![endif]-->
 <html lang="en">
 
 <head>
@@ -11,30 +7,36 @@
     <title>Homepage</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/css/index.css">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    {{!-- <link rel="stylesheet" type="text/css" href="/css/index.css"> --}}
+    <link rel="stylesheet" type="text/css" href="/css/specials.css">
     </nav>
 </head>
+<body>
+  <br><br><br>
+  <div class="container">
+    <h1 class="line">Meet our Team Staff</h1>
+    <h3>Student Directors</h3>
+  </div>
+  <div class="container">
+    {{!-- Run a For-Loop that checks for the latest Student Director --}}
+    <div class="row">
+      <div>
+        <img src="/img/Headshots/Sam_Headshot.png" class="img-fluid col-md-3" alt="Sam Headshot">
+      </div>
+      <div>
+        <img src="/img/Headshots/Sam_Headshot.png" class="img-fluid col-md-3" alt="Sam Headshot">
+      </div>
+    </div>
+  </div>
+</body>
+<br><br>
+
+{{!-- </head>
 <h1 style="text-align: center; font-size: 40px; padding-top:3em;">Meet the staff</h1>
 <h2 style="text-align: center; padding-top:.5em;">Student Directors</h2>
-</head>
-<!--
-    body>
-<div class="image-wrapper">
-  <div class="container">
-  <div class="image-row">
-    <img src="img/Headshots/Sam_Headshot.png" alt="Image 1">
-    <img src="img/Headshots/Leo_Headshot.png" alt="Image 2">
-  </div>
-  <div class="text-row" style="display: inline-block;">
-    <p style="text-align:left;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vel nunc eget enim laoreet pretium. Morbi vitae est risus. Vivamus non eros non nisl blandit consectetur. Maecenas fringilla ipsum ac purus pulvinar, in egestas est dapibus. Cras at enim nec ligula venenatis rhoncus. Praesent ultricies sem eu ligula porta, ut iaculis mauris imperdiet. Maecenas semper, nisl in ultricies sodales, dui leo pretium leo, eu eleifend eros justo eget libero.</p>
-    <p style="text-align:left;">Vestibulum et sem ut mauris elementum lacinia. Duis feugiat tortor ut sem tempus, at pretium risus auctor. Pellentesque euismod urna sed dui sodales, eu tincidunt ipsum porta. Sed consectetur sapien nec nisl lobortis, id varius libero accumsan. Vivamus fermentum, ipsum eget egestas bibendum, elit orci pulvinar nisl, et ultrices tortor lectus vel ligula. Mauris convallis turpis a libero consectetur, vel gravida magna venenatis.</p>
-  </div>
-</div>
-</div>
-</body>
--->
-<div class="container-director">
+</head> --}}
+
+{{!-- <div class="container-director">
   <div class="image-wrapper">
     <img src="img/Headshots/Sam_Headshot.png" alt="Samuel Bunker" style="display: inline-block;">
   </div>
@@ -47,4 +49,4 @@
   <div class="text">
     <p>Nunc ultricies diam quis leo pretium, non aliquet arcu sodales.</p>
   </div>
-</div>
+</div> --}}

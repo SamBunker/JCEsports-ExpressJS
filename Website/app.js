@@ -126,6 +126,28 @@ function hasAuth(req, res, next) {
         res.status(401).redirect('/login');
     }
 }
+
+app.get('/teamlist', async (req, res) => {
+    try {
+        const students = await getStudents();
+        const items = students["Items"];
+        items.forEach( function(childArray) {
+            childArray.forEach( function(item) {
+                console.log(item);
+            });
+        });
+        // for (var i = 0; i < items.length; i++) {
+        //     var currentItem = items[i];
+        //     console.log("Test1");
+        //     for (var j = 0; j < currentItem.length; j++) {
+        //         console.log(currentItem[j]);
+        //         console.log("Hello");
+        //     }
+        // }
+    } catch (error) {
+        console.error(error.message);
+    }
+});
 // app.get('/teamlist', async (req, res) => {
 //     try {
 //       const table = await getPlayers(connection);

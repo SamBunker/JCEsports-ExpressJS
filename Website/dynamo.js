@@ -16,7 +16,7 @@ const getStudents = async () => {
         TableName: TABLE_NAME
     };
     const students = await dynamoClient.scan(params).promise();
-    console.log(students);
+    // console.log(students);
     return students;
 }
 
@@ -25,7 +25,7 @@ const getUsers = async () => {
         TableName: LOGIN_TABLE
     };
     const users = await dynamoClient.scan(params).promise();
-    console.log(users);
+    // console.log(users);
     return users;
 }
 
