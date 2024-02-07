@@ -131,34 +131,13 @@ app.get('/teamlist', async (req, res) => {
     try {
         const students = await getStudents();
         const items = students["Items"];
-        items.forEach( function(childArray) {
-            childArray.forEach( function(item) {
-                console.log(item);
-            });
+        items.forEach( function(items) {
+            console.log(items["name"])
         });
-        // for (var i = 0; i < items.length; i++) {
-        //     var currentItem = items[i];
-        //     console.log("Test1");
-        //     for (var j = 0; j < currentItem.length; j++) {
-        //         console.log(currentItem[j]);
-        //         console.log("Hello");
-        //     }
-        // }
     } catch (error) {
         console.error(error.message);
     }
 });
-// app.get('/teamlist', async (req, res) => {
-//     try {
-//       const table = await getPlayers(connection);
-//       res.render("teamlist", { list: async function() {
-//         await getPlayers(connection);
-//       } });
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).send('Internal Server Error');
-//     }
-//   });
 
 function renderTemplate(req, res, next) {
     const template = req.path.slice(1);
@@ -218,6 +197,7 @@ app.post('/register', async (req, res) => {
         const checkEmail = await checkIfEmail(email);
         if (checkEmail.Count > 0 ) {
             console.log("Email Already In Table!");
+            res.status(401).send('Email Already in Database!') //TODO: Will need changed since this releases all emails that are already registered.
             return;
         } else {
             bcrypt.genSalt(saltRounds, function(err, salt) {
