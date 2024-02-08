@@ -1,11 +1,12 @@
 const express = require('express');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
-const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers } = require('./dynamo');
+const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, getCalendar, addOrUpdateCalendarEvent } = require('./dynamo');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const bodyParser = require('body-parser');
 const session = require('express-session');
+
 // const passport = require('passport');
 const User = require('./models/user');
 const { v4: uuidv4 } = require('uuid');
@@ -40,6 +41,16 @@ app.get('/students', isUserValid, hasAuth, async (req, res) => {
         res.status(500).json({err: 'Something went wrong'});
     }
 });
+
+app.get('/json_calendar', async (req, res) => {
+    try {
+        const events = await getCalendar();
+        res.json(events)
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({err: 'Something went wrong'});
+    }
+})
 
 app.get('/users', isUserValid, hasAuth, async (req, res) => {
     try {
@@ -116,10 +127,10 @@ function hasAuth(req, res, next) {
         const user = req.session.user;
         const auth = user.auth;
 
-        if (auth !== "admin") { // Pull the user session auth
-            throw new Error("Unauthorized Access! Admin Priviledges Required.");
-            res.status(401).redirect('/');
-        } 
+        // if (auth !== "admin") { // Pull the user session auth
+        //     throw new Error("Unauthorized Access! Admin Priviledges Required.");
+        //     res.status(401).redirect('/');
+        // } 
         next();
     } catch (error) {
         console.error(error.message);
@@ -131,13 +142,69 @@ app.get('/teamlist', async (req, res) => {
     try {
         const students = await getStudents();
         const items = students["Items"];
-        items.forEach( function(items) {
-            console.log(items["name"])
-        });
+        const template = req.path.slice(1);
+        res.render(template, { items }) // Does not render the text. maybe a json?
     } catch (error) {
         console.error(error.message);
     }
 });
+
+app.get('/teamschedule', async (req, res) => {
+    try {
+        const calendar_events = [
+            {
+              title: 'All Day Event',
+              start: '2023-11-01'
+            },
+            {
+              title: 'Long Event',
+              start: '2023-11-07',
+              end: '2023-11-10'
+            },
+            {
+              groupId: '999',
+              title: 'Repeating Event',
+              start: '2023-11-09T16:00:00'
+            },
+            {
+              groupId: '999',
+              title: 'Repeating Event',
+              start: '2023-11-16T16:00:00'
+            },
+            {
+              title: 'Conference',
+              start: '2023-11-11',
+              end: '2023-11-13'
+            },
+            {
+              title: 'Meeting',
+              start: '2023-11-12T10:30:00',
+              end: '2023-11-12T12:30:00'
+            },
+            {
+              title: 'Lunch',
+              start: '2023-11-12T12:00:00'
+            },
+            {
+              title: 'Meeting',
+              start: '2023-11-12T14:30:00'
+            },
+            {
+              title: 'Birthday Party',
+              start: '2023-11-13T07:00:00'
+            },
+            {
+              title: 'Click for Google',
+              url: 'https://google.com/',
+              start: '2023-11-28'
+            }
+          ];
+        const template = req.path.slice(1);
+        res.render(template, { calendar_events })
+    } catch (error) {
+        console.error(error.message);
+    }
+})
 
 function renderTemplate(req, res, next) {
     const template = req.path.slice(1);
@@ -151,7 +218,7 @@ app.get('/about', renderTemplate);
 app.get('/register', renderTemplate);
 app.get('/login', renderTemplate);
 app.get('/history', renderTemplate);
-app.get('/teamschedule', renderTemplate);
+// app.get('/teamschedule', renderTemplate);
 app.get('/awards', renderTemplate);
 
 app.post('/login', async (req, res) => {
@@ -235,6 +302,7 @@ app.post('/register', async (req, res) => {
 
 // ADMIN DASHBOARD
 app.post('/admin', (req, res) => {
+    // Make this more than just posting a new user. Make it check to see if that's what the admin wanted. If it was, then post it.
     const playerCreation = {
         id: uuidv4(),
         number: sanitizeInput(req.body.playernumber),
