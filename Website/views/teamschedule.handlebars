@@ -1,2 +1,27 @@
 {{!-- https://dev.to/536uriel/how-to-build-basic-and-dynamic-calendar-with-nodejs-1f8c
  Or other Dynamic Calendar imports for the site. --}}
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar')
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            interactive: true,
+            events: '/json_calendar'
+        });
+        calendar.render()
+        });
+
+    </script>
+  </head>
+  <body>
+    <br><br><br>
+    <div class="container">
+      <div id='calendar'></div>
+      {{!-- <p>{{{calendar_events}}}</p> --}}
+    </div>
+  </body>
+</html>

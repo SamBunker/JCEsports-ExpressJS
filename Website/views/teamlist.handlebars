@@ -2,17 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Team List</title>
+  {{!-- <title>Team List</title> --}}
   <link rel="stylesheet" href="/css/teamlist.css">
 </head>
 <body>
   <br><br><br><br><br>
   <h1>Team List</h1>
   <br><br>
-  <p>{{ list }}</p>
+  <p>
+    <table>
+      <thead>
+        <tr style="background-color: #0C1E3D;">
+          <th>Id</th>
+          <th>Name</th>
+          <th>Gamertag</th>
+          <th>Position</th>
+          <th>Team</th>
+          <th>Grade</th>
+          <th>Hometown/High School</th>
+          <th>Country</th>
+        </tr>
+      </thead>
+      <tbody>
+      {{#each items }}
+        <tr>
+          <td>{{id}}</td>
+          <td>{{name}}</td>
+          <td>{{gamertag}}</td>
+          <td>{{position}}</td>
+          <td>{{team}}</td>
+          <td>{{grade}}</td>
+          <td>{{hometown_highschool}}</td>
+          <td>{{country_code}}</td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </p>
   <br><br>  
-
-
-  <table><thead><tr style="background-color: #0C1E3D;"><th>Id</th><th>Number</th><th>Name</th><th>Gamertag</th><th>Team</th><th>Position</th><th>Grade</th><th>Hometown/High School</th><th>Country</th></tr></thead><tbody><tr><td>1</td><td>13</td><td>Samuel Bunker</td><td>EngineFluids</td><td></td><td>Top</td><td>Senior</td><td>Chambersburg</td><td>US</td></tr><tr><td>2</td><td>14</td><td>ChloeWebb</td><td>PixelSquid</td><td></td><td>Tank</td><td>Junior</td><td>Chambersburg</td><td>US</td></tr></tbody></table>
 </body>
 </html>

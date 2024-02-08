@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "admin-bro": "^4.0.1",
     "aws-sdk": "^2.1525.0",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
@@ -9,6 +8,7 @@
     "express": "^4.18.2",
     "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
+    "fullcalendar": "^6.1.10",
     "handlebars": "^4.7.8",
     "mysql": "^2.18.1",
     "passport": "^0.7.0",
