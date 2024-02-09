@@ -149,62 +149,14 @@ app.get('/teamlist', async (req, res) => {
     }
 });
 
-app.get('/teamschedule', async (req, res) => {
-    try {
-        const calendar_events = [
-            {
-              title: 'All Day Event',
-              start: '2023-11-01'
-            },
-            {
-              title: 'Long Event',
-              start: '2023-11-07',
-              end: '2023-11-10'
-            },
-            {
-              groupId: '999',
-              title: 'Repeating Event',
-              start: '2023-11-09T16:00:00'
-            },
-            {
-              groupId: '999',
-              title: 'Repeating Event',
-              start: '2023-11-16T16:00:00'
-            },
-            {
-              title: 'Conference',
-              start: '2023-11-11',
-              end: '2023-11-13'
-            },
-            {
-              title: 'Meeting',
-              start: '2023-11-12T10:30:00',
-              end: '2023-11-12T12:30:00'
-            },
-            {
-              title: 'Lunch',
-              start: '2023-11-12T12:00:00'
-            },
-            {
-              title: 'Meeting',
-              start: '2023-11-12T14:30:00'
-            },
-            {
-              title: 'Birthday Party',
-              start: '2023-11-13T07:00:00'
-            },
-            {
-              title: 'Click for Google',
-              url: 'https://google.com/',
-              start: '2023-11-28'
-            }
-          ];
-        const template = req.path.slice(1);
-        res.render(template, { calendar_events })
-    } catch (error) {
-        console.error(error.message);
-    }
-})
+// app.get('/teamschedule', async (req, res) => {
+//     try {
+//         const template = req.path.slice(1);
+//         res.render()
+//     } catch (error) {
+//         console.error(error.message);
+//     }
+// })
 
 function renderTemplate(req, res, next) {
     const template = req.path.slice(1);
@@ -218,7 +170,7 @@ app.get('/about', renderTemplate);
 app.get('/register', renderTemplate);
 app.get('/login', renderTemplate);
 app.get('/history', renderTemplate);
-// app.get('/teamschedule', renderTemplate);
+app.get('/teamschedule', renderTemplate);
 app.get('/awards', renderTemplate);
 
 app.post('/login', async (req, res) => {
@@ -303,6 +255,8 @@ app.post('/register', async (req, res) => {
 // ADMIN DASHBOARD
 app.post('/admin', (req, res) => {
     // Make this more than just posting a new user. Make it check to see if that's what the admin wanted. If it was, then post it.
+    const option = sanitizeInput(req.body.adminOption)
+    
     const playerCreation = {
         id: uuidv4(),
         number: sanitizeInput(req.body.playernumber),
