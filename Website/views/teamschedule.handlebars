@@ -10,7 +10,15 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             interactive: true,
-            events: '/json_calendar'
+            events: '/json_calendar',
+            eventClick: function(info) {
+              alert('ID: ' + info.event.id + '\n' + 'Title: ' + info.event.title + '\n' + 'Start: ' + info.event.start);
+              //alert('Start Time: ' + info.event.start);
+              //$('#modalID').html(info.event.id);
+              //$('#modalTitle').html(info.event.title);
+              //$('#fullCalModal').show();
+              //https:codepen.io/anon/pen/eapjWN?editors=1010
+            },
         });
         calendar.render()
         });
@@ -19,8 +27,13 @@
   </head>
   <body>
     <br><br><br>
+    {{!-- <div id="fullCalModal" style="display:none;">
+      <div>ID: <span id="modalID"></span></div>
+      <div>Title: <span id="modalTitle"></span></div>
+    </div> --}}
     <div class="container">
       <div id='calendar'></div>
+      <br>
       {{!-- <p>{{{calendar_events}}}</p> --}}
     </div>
   </body>
