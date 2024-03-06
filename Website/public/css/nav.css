@@ -1,3 +1,7 @@
+  header {
+    padding-bottom: 50px;
+  }
+
   .sticky {
     position: -webkit-sticky;
     /* Safari */
