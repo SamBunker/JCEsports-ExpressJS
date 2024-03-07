@@ -1,14 +1,14 @@
 const express = require('express');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
-const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, getCalendar, addOrUpdateCalendarEvent } = require('../dynamo');
+const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, getCalendar, addOrUpdateCalendarEvent } = require('./dynamo');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
 // const passport = require('passport');
-const User = require('../models/user');
+const User = require('./models/user');
 const { v4: uuidv4 } = require('uuid');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
