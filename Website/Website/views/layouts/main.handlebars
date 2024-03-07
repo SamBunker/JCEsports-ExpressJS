@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esports</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/nav.css">
+  <script src="/js/helpers.js"></script>
+</head>
+<header style="background-color: #0C1E3D;">
+    <nav class="navbar">
+        <ul class="nav-list" class="justify-content-center">
+            <img src="/img/JC-logo.png" alt="JCE Logo" class="nav-logo">
+            <li><a href="/">Homepage</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/teamlist">Teams</a></li>
+            <li><a href="/teamschedule">Schedule</a></li>
+            <li><a href="/awards">Awards</a></li>
+            <li><a href="/history">History</a></li>
+            <span>
+              {{#if isLoggedIn}}
+                <li><a href="/admin">Admin</a></li>
+              {{else}}
+                <li><a href="/login">Login</a></li>
+              {{/if}}
+            </span>
+        </ul>
+    </nav>
+</header>
+
+<body>
+  {{{body}}}
+</body>
+<footer>Juniata College Esports | Copyright 2024 &copy;<br>By Students, For Students.</footer>
+</html>

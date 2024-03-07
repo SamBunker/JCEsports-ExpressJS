@@ -1,0 +1,17 @@
+h1 {
+    position: relative;
+}
+
+h1::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 25%;
+    height: 3px;
+    background: black;
+}
+
+.row > div > img {
+    border-radius: 20px;
+}

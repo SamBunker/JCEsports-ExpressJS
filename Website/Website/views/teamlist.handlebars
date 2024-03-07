@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  {{!-- <title>Team List</title> --}}
+  <link rel="stylesheet" href="/css/teamlist.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Team List</h1>
+    <br>
+    <p>
+      <table>
+        <thead>
+          <tr style="background-color: #0C1E3D;">
+            <th>Name</th>
+            <th>Gamertag</th>
+            <th>Team</th>
+            <th>Grade</th>
+            <th>Hometown/High School</th>
+            <th>Country</th>
+          </tr>
+        </thead>
+        <tbody>
+        {{#each items }}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{gamertag}}</td>
+            <td>{{team}}</td>
+            <td>{{grade}}</td>
+            <td>{{hometown_highschool}}</td>
+            <td>{{country_code}}</td>
+          </tr>
+        {{/each}}
+        </tbody>
+      </table>
+    </p>
+  </div>
+  <br><br>  
+</body>
+</html>

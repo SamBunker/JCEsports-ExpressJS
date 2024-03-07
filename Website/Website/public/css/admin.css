@@ -1,0 +1,15 @@
+html {
+    height: 100vh;
+    width: 100vw;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+}
+
+.nav-block {
+    height: 50px;
+    width: 100%;
+    padding-bottom: 60px;
+}

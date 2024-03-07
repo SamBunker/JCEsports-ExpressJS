@@ -1,0 +1,226 @@
+.header {
+  background: #0C1E3D;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+div.sticky {
+  position: -webkit-sticky;
+  /* Safari */
+  position: sticky;
+  top: 0;
+}
+
+.nav-logo {
+  float: left;
+  /* Use float property for left alignment */
+  margin-right: -10px;
+  /* Add some margin to the right of the image */
+  margin-left: -20px;
+  width: 10%;
+  height: 10%;
+}
+
+.navbar {
+  background-color: #AC9C66;
+  width: 100%;
+  overflow: hidden;
+  text-align: left;
+  position: fixed;
+  display: block;
+  z-index: 1000;
+  /* Adjust the z-index value as needed */
+}
+
+/* Navbar styles */
+
+.nav-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list li {
+  float: left;
+  margin-top: 30em;
+  margin-left: -10em;
+}
+
+.nav-list li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14em 16em;
+  /* Adjust padding to change button size */
+  text-decoration: none;
+  font-size: 25px;
+}
+
+/* Add some spacing between navbar buttons */
+.nav-list li+li {
+  margin-left: 0em;
+  /* Adjust margin to change space between buttons */
+}
+
+/* Change color on hover */
+.nav-list li a:hover {
+  background-color: #0C1E3D;
+  color: #f2f2f2;
+}
+
+.nav-list li a.active {
+  background-color: #0C1E3D;
+  color: #f2f2f2;
+}
+
+/*Communications bar at top of index */
+.breadcrumbs {
+  margin: 0 0 1rem 0;
+  list-style: none;
+}
+
+.breadcrumbs::before, .breadcrumbs::after {
+  display: table;
+  content: ' ';
+  -ms-flex-preferred-size: 0;
+  flex-basis: 0;
+  -ms-flex-order: 1;
+  order: 1;
+}
+
+.breadcrumbs::after {
+  clear: both;
+}
+
+.breadcrumbs li {
+  float: left;
+  font-size: 0.6875rem;
+  color: #0a0a0a;
+  cursor: default;
+  text-transform: uppercase;
+}
+
+.breadcrumbs li:not(:last-child)::after {
+  position: relative;
+  margin: 0 0.75rem;
+  opacity: 1;
+  content: "/";
+  color: #cacaca;
+}
+
+.breadcrumbs a {
+  color: #2ba6cb;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbs .disabled {
+  color: #cacaca;
+  cursor: not-allowed;
+}
+
+span {
+  background-color: #0C1E3D;
+}
+
+
+/*-Image Carousel-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+}
+
+.active {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: ease-in-out;
+  animation-duration: 2s;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .text {
+    font-size: 11px;
+  }
+}
+
+/*Team list table*/
+table {
+  width: 90%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin: auto;
+}
+
+th, td {
+  border: 1px solid black;
+  text-align: left;
+  padding: 0.8em;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color:#AC9C66;
+}
+
+.row>* {
+  padding: 0;
+  /* height: 300px;
+  width: auto; */
+}
+
+.row>img {
+  cursor: pointer;
+  transition: 0.25s ease-in-out;
+  border: 0px inset white;
+}
+
+.row>img:hover {
+  border: 10px inset white;
+}
+
+.float-r {
+  float: right;
+}
+
+
+/*About Meet the Staff*/
+.container {
+  text-align: center;
+  margin: 0;
+}
+
+.image-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0; /* No margin between images */
+}
+
+.centered-text {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}

@@ -1,0 +1,96 @@
+  header {
+    padding-bottom: 50px;
+  }
+
+  .sticky {
+    position: -webkit-sticky;
+    /* Safari */
+    position: sticky;
+    top: 0;
+  }
+  
+  .nav-logo {
+    float: left;
+    /* margin: 0 -10px 0 -20px; */
+    width: 10%;
+    /* height: 10%; */
+  }
+  
+  .navbar {
+    background-color: #AC9C66;
+    width: 100%;
+    /* overflow: hidden; */
+    text-align: left;
+    position: fixed;
+    display: block;
+    z-index: 5;
+    height: 55px;
+    border-bottom: 5px solid #333;
+    /* Adjust the z-index value as needed */
+  }
+  
+  /* Navbar styles */
+  
+  .nav-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  .nav-list li {
+    position: relative;
+    float: left;
+    margin-left: -10px;
+    transform: translateY(-50%);
+    top: 50%;
+    /* margin-top: 1em; */
+  }
+
+  .nav-list span {
+    position: relative;
+    float: right;
+    padding-right: 10px;
+    top: 50%;
+  }
+  
+  .nav-list li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 8px 14px;
+    /* Adjust padding to change button size */
+    text-decoration: none;
+    font-size: 15px;
+  }
+  
+  /* Add some spacing between navbar buttons */
+  .nav-list li+li {
+    margin-left: 0px;
+    /* Adjust margin to change space between buttons */
+  }
+  
+  /* Change color on hover */
+  .nav-list li a:hover {
+    background-color: #0C1E3D;
+    color: #f2f2f2;
+  }
+  
+  .nav-list li a.active {
+    background-color: #0C1E3D;
+    color: #f2f2f2;
+  }
+  
+  footer {
+    font-family: "PrimaryFont", sans-serif;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    color: #fff;
+    background-color: #333;
+    letter-spacing: 2px;
+  }
