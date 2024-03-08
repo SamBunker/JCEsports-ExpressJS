@@ -1,68 +1,121 @@
 <head>
     <link rel="stylesheet" href="/css/admin.css">
+    <script src="/js/admin.js"></script>
 </head>
 <body>
 <div class="nav-block"></div>
     <div class="container">
-        <form action="/admin" method="post">
+        <div class="col">
+            <h4>Calendar</h4>
+            <div class="btn-group">
+                <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" onclick="showDiv('controlCalendar'), hideDiv('controlPlayer')"/>
+                <label class="btn btn-outline-primary" for="option1">Add Calendar Event</label>
 
-        <label for="adminOption">Option</label>
-        <select name="adminOption" id="adminOption" required>
-            <option value="calendarEvent">Calendar Event</option>
-            <option value=""></option>
-            <option value=""></option>
-        </select>
-        <div class="container player">
-            <div class="column">
-                <label for="playernumber">Jersey Number: </label>
-                <input type="number" name="playernumber" id="playernumber" required>
+                <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" />
+                <label class="btn btn-outline-primary" for="option2">Delete Calendar Event</label>
+
+                <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" />
+                <label class="btn btn-outline-primary" for="option3">Edit Calendar Event</label>
+
+                <input type="radio" class="btn-check" name="options" id="option4" autocomplete="off" onclick="showDiv('controlPlayer'), hideDiv('controlCalendar')" />
+                <label class="btn btn-outline-primary" for="option4">New Player</label>
+
+                <input type="radio" class="btn-check" name="options" id="option5" autocomplete="off" />
+                <label class="btn btn-outline-primary" for="option5">New User</label>
+
+                <input type="radio" class="btn-check" name="options" id="option6" autocomplete="off" />
+                <label class="btn btn-outline-primary" for="option6">New User</label>
             </div>
-            <div class="column">
-                <label for="playername">Full Name: </label>
-                <input type="text" name="playername" id="playername" required>
+
+            <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Dropdown Button
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="#">Action 1</a></li>
+                <li><a class="dropdown-item" href="#">Another Action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
             </div>
-            <div class="column">
-                <label for="playergamertag">Gamer Tag: </label>
-                <input type="text" name="playergamertag" id="playergamertag" required>
-            </div>
-            <div class="column">
-                <label for="playerteam">Team: </label>
-                <select id="playerteam" name="playerteam">
-                    <option value="staff">Team Staff</option>
-                    <option value="leagueoflegends">League of Legends</option>
-                    <option value="rocketleague">Rocket League</option>
-                    <option value="smashultimate">Smash Ultimate</option>
-                    <option value="overwatch">Overwatch</option>
-                    <option value="valorant">Valorant</option>
-                    <option value="splatoon">Splatoon</option>
-                    <option value="apexlegends">Apex Legends</option>
-                    <option value="rainbowsix">Rainbow Six</option>
-                </select>
-            </div>
-            <div class="column">
-                <label for="playerposition">Position: </label>
-                <input type="text" name="playerposition" id="playerposition" required>
-            </div>
-            <div class="column">
-                <label for="playergrade">Grade: </label>
-                <select id="playergrade" name="playergrade">
-                    <option value="freshman">Freshman</option>
-                    <option value="sophomore">Sophomore</option>
-                    <option value="junior">Junior</option>
-                    <option value="senior">Senior</option>
-                    <option value="postgrad">Post-Graduate</option>
-                </select>
-            </div>
-            <div class="column">
-                <label for="playerhometown">Hometown/High School: </label>
-                <input type="text" name="playerhometown" id="playerhometown" required>
-            </div>
-            <div class="column">
-                <label for="country">Country: </label>
-                <input type="text" name="country" id="country" required>
+
+
+            {{!-- </div>
+            <h4>Player</h4>
+            <div class="btn-group">
+                
+            </div> --}}
+        
+                {{!-- <label for="adminOption">Option</label>
+                <select name="adminOption" id="adminOption" required>
+                    <option value="calendarEvent">Calendar Event</option>
+                    <option value=""></option>
+                    <option value=""></option>
+                </select> --}}
+
+            <div class="col-sm-9 bg-light p-5">
+                <form action="/admin" method="post">
+                    <div id="controlPlayer">
+                        <div class="container">
+                            <h1>Add Player to Roster</h1>
+                            <div class="column">
+                                <label for="playernumber">Jersey Number: </label>
+                                <input type="number" name="playernumber" id="playernumber" required>
+                            </div>
+                            <div class="column">
+                                <label for="playername">Full Name: </label>
+                                <input type="text" name="playername" id="playername" required>
+                            </div>
+                            <div class="column">
+                                <label for="playergamertag">Gamer Tag: </label>
+                                <input type="text" name="playergamertag" id="playergamertag" required>
+                            </div>
+                            <div class="column">
+                                <label for="playerteam">Team: </label>
+                                <select id="playerteam" name="playerteam">
+                                    <option value="staff">Team Staff</option>
+                                    <option value="leagueoflegends">League of Legends</option>
+                                    <option value="rocketleague">Rocket League</option>
+                                    <option value="smashultimate">Smash Ultimate</option>
+                                    <option value="overwatch">Overwatch</option>
+                                    <option value="valorant">Valorant</option>
+                                    <option value="splatoon">Splatoon</option>
+                                    <option value="apexlegends">Apex Legends</option>
+                                    <option value="rainbowsix">Rainbow Six</option>
+                                </select>
+                            </div>
+                            <div class="column">
+                                <label for="playerposition">Position: </label>
+                                <input type="text" name="playerposition" id="playerposition" required>
+                            </div>
+                            <div class="column">
+                                <label for="playergrade">Grade: </label>
+                                <select id="playergrade" name="playergrade">
+                                    <option value="freshman">Freshman</option>
+                                    <option value="sophomore">Sophomore</option>
+                                    <option value="junior">Junior</option>
+                                    <option value="senior">Senior</option>
+                                    <option value="postgrad">Post-Graduate</option>
+                                </select>
+                            </div>
+                            <div class="column">
+                                <label for="playerhometown">Hometown/High School: </label>
+                                <input type="text" name="playerhometown" id="playerhometown" required>
+                            </div>
+                            <div class="column">
+                                <label for="country">Country: </label>
+                                <input type="text" name="country" id="country" required>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </div>                
+                    </form>
+                    <form action="/admin" method="post">
+                    <div id="controlCalendar">
+                        <h1>Add Calendar Event</h1>
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
-        <button type="submit">Submit</button>
-        </form>
     </div>
 </body>
