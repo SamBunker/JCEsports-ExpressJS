@@ -255,25 +255,41 @@ app.post('/register', async (req, res) => {
 // ADMIN DASHBOARD
 app.post('/admin', (req, res) => {
     // Make this more than just posting a new user. Make it check to see if that's what the admin wanted. If it was, then post it.
-    const option = sanitizeInput(req.body.adminOption)
+    const post_type = sanitizeInput(req.body.adminOption);
     
-    const playerCreation = {
-        id: uuidv4(),
-        number: sanitizeInput(req.body.playernumber),
-        name: sanitizeInput(req.body.playername),
-        gamertag: sanitizeInput(req.body.playergamertag),
-        team: sanitizeInput(req.body.playerteam),
-        position: sanitizeInput(req.body.playerposition),
-        grade: sanitizeInput(req.body.playergrade),
-        hometown_highschool: sanitizeInput(req.body.playerhometown),
-        country_code: sanitizeInput(req.body.country)
-    }
-    try {
-        addOrUpdateStudent(playerCreation);
-        res.status(200).send("Creation Successful");
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({error: 'Error inserting student!'});
+    if ( post_type == "create_user") {
+        const playerCreation = {
+            id: uuidv4(),
+            number: sanitizeInput(req.body.playernumber),
+            name: sanitizeInput(req.body.playername),
+            gamertag: sanitizeInput(req.body.playergamertag),
+            team: sanitizeInput(req.body.playerteam),
+            position: sanitizeInput(req.body.playerposition),
+            grade: sanitizeInput(req.body.playergrade),
+            hometown_highschool: sanitizeInput(req.body.playerhometown),
+            country_code: sanitizeInput(req.body.country)
+        }
+        try {
+            addOrUpdateStudent(playerCreation);
+            res.status(200).send("Creation Successful");
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({error: 'Error inserting student!'});
+        }
+    } else if ( post_type == "create_event" ) {
+        const newEvent = {
+            id: uuidv4(),
+            title: sanitizeInput(req.body.title),
+            start: sanitizeInput(req.body.start),
+            end: sanitizeInput(req.body.end)
+        }
+        try {
+            addOrUpdateCalendarEvent(newEvent);
+            res.status(200).send("Calendar Event Added!");
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({error: 'Error inserting event!'}); 
+        }
     }
 });
 
