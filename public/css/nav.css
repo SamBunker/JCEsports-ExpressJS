@@ -1,3 +1,7 @@
+  .nav-bg {
+    background-color: #AC9C66;
+  }
+
   header {
     padding-bottom: 50px;
   }
@@ -70,13 +74,17 @@
     /* Adjust margin to change space between buttons */
   }
   
+
+  .nav-item a {
+    color: black;
+  }
   /* Change color on hover */
-  .nav-list li a:hover {
+  .nav-item a:hover {
     background-color: #0C1E3D;
     color: #f2f2f2;
   }
   
-  .nav-list li a.active {
+  .nav-item a:active {
     background-color: #0C1E3D;
     color: #f2f2f2;
   }
@@ -93,4 +101,21 @@
     color: #fff;
     background-color: #333;
     letter-spacing: 2px;
+  }
+
+  @media (max-width: 800px) { 
+    .notMobile {
+      display: none;
+    }
+    .mobile {
+      display: block;
+    }
+  }
+  @media (min-width: 801px) { 
+    .notMobile {
+      display: block;
+    }
+    .mobile {
+      display: none;
+    }
   }

@@ -9,9 +9,50 @@
   {{!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> --}}
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/nav.css">
-  {{!-- <script src="/js/helpers.js"></script> --}}
+
 </head>
-<header style="background-color: #0C1E3D;">
+<div class="mobile">
+    <div class="collapse" id="navbarToggleExternalContent">
+        <div class="p-4">
+            <ul class="nav me-auto nav-pills">
+                <li class="nav-item"><a href="/teamlist" class="nav-link">Teams</a></li>
+                <li class="nav-item"><a href="/awards" class="nav-link">Awards</a></li>
+                <li class="nav-item"><a href="/history" class="nav-link">History</a></li>
+                <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<header class="d-flex flex-wrap py-3 nav-bg px-3">
+    <div class="notMobile">
+        <a href="/" class="d-flex mb-3 mb-md-0 text-dark">
+        <img src="/img/JC-logo.png" alt="JCE Logo" width="auto" height="40px">
+        </a>
+    </div>
+
+    <ul class="nav nav-pills justify-content-center me-md-auto">
+        <div class="mobile">
+            <nav class="nav-bg navbar-light px-2">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </nav>
+        </div>
+        <li class="nav-item"><a href="/" class="nav-link" aria-current="page">Home</a></li>
+        <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+        <li class="notMobile nav-item"><a href="/teamlist" class="nav-link">Teams</a></li>
+        <li class="nav-item"><a href="/teamschedule" class="nav-link">Schedule</a></li>
+        <li class="notMobile nav-item"><a href="/awards" class="nav-link">Awards</a></li>
+        <li class="notMobile nav-item"><a href="/history" class="nav-link">History</a></li>
+    </ul>
+    <ul class="nav nav-pills">
+        <li class="notMobile nav-item"><a href="/login" class="nav-link">Login</a></li>
+    </ul>
+</header>
+
+
+
+{{!-- <header style="background-color: #0C1E3D;">
     <nav class="navbar">
         <ul class="nav-list" class="justify-content-center">
             <img src="/img/JC-logo.png" alt="JCE Logo" class="nav-logo">
@@ -30,12 +71,12 @@
             </span>
         </ul>
     </nav>
-</header>
+</header> --}}
 
 <body>
   {{{body}}}
+
+  <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
-{{!-- <script src="../../public/js/jquery.min.js"></script>
-<script src="../../public/js/bootstrap.min.js"></script> --}}
 <footer>Juniata College Esports | Copyright 2024 &copy;<br>By Students, For Students.</footer>
 </html>
