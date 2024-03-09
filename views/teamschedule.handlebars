@@ -1,0 +1,40 @@
+{{!-- https://dev.to/536uriel/how-to-build-basic-and-dynamic-calendar-with-nodejs-1f8c
+ Or other Dynamic Calendar imports for the site. --}}
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar')
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            interactive: true,
+            events: '/json_calendar',
+            eventClick: function(info) {
+              alert('ID: ' + info.event.id + '\n' + 'Title: ' + info.event.title + '\n' + 'Start: ' + info.event.start);
+              //alert('Start Time: ' + info.event.start);
+              //$('#modalID').html(info.event.id);
+              //$('#modalTitle').html(info.event.title);
+              //$('#fullCalModal').show();
+              //https:codepen.io/anon/pen/eapjWN?editors=1010
+            },
+        });
+        calendar.render()
+        });
+
+    </script>
+  </head>
+  <body>
+    <br><br><br>
+    {{!-- <div id="fullCalModal" style="display:none;">
+      <div>ID: <span id="modalID"></span></div>
+      <div>Title: <span id="modalTitle"></span></div>
+    </div> --}}
+    <div class="container">
+      <div id='calendar'></div>
+      <br>
+      {{!-- <p>{{{calendar_events}}}</p> --}}
+    </div>
+  </body>
+</html>
