@@ -1,9 +1,0 @@
-Users with accounts can post or answer FAQs
-Q&As?
-
-To view Schedule maybe you need to login?
-To post events to schedule maybe you need a login with privs?
-
-Should logins be open to everyone? -> What is the point or beneifit of logging in?
-Restrict logins / registration to non-esports or juniata members?
-
