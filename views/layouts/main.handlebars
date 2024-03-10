@@ -8,19 +8,7 @@
   <link rel="stylesheet" href="/css/nav.css">
 
 </head>
-<div class="mobile">
-    <div class="collapse" id="navbarToggleExternalContent">
-        <div class="p-4">
-            <ul class="nav me-auto nav-pills">
-                <li class="nav-item"><a href="/teamlist" class="nav-link">Teams</a></li>
-                <li class="nav-item"><a href="/awards" class="nav-link">Awards</a></li>
-                <li class="nav-item"><a href="/history" class="nav-link">History</a></li>
-                <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-<header class="d-flex flex-wrap py-3 nav-bg px-3">
+<header class="d-flex flex-wrap py-3 nav-bg px-3 fixed-top">
     <div class="notMobile">
         <a href="/" class="d-flex mb-3 mb-md-0 text-dark">
         <img src="/img/JC-logo.png" alt="JCE Logo" width="auto" height="40px">
@@ -50,6 +38,20 @@
       {{/if}}
       {{!-- <li class="notMobile nav-item"><a href="/login" class="nav-link">Login</a></li> --}}
     </ul>
+    <div class="mobile pt-3">
+    <div class="collapse" id="navbarToggleExternalContent">
+            <ul class="nav me-auto nav-pills">
+                <li class="nav-item"><a href="/teamlist" class="nav-link">Teams</a></li>
+                <li class="nav-item"><a href="/awards" class="nav-link">Awards</a></li>
+                <li class="nav-item"><a href="/history" class="nav-link">History</a></li>
+                {{#if isLoggedIn}}
+                  <li class="nav-item"><a href="/admin" class="nav-link">Admin</a></li>
+                {{else}}
+                  <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
+                {{/if}}
+            </ul>
+    </div>
+</div>
 </header>
 
 
