@@ -16,8 +16,6 @@ padding-bottom: 1em;
 
 .row>* {
 padding: 0;
-/* height: 300px;
-width: auto; */
 }
 
 .row>img {
@@ -30,36 +28,36 @@ border: 0px inset white;
 border: 10px inset white;
 }
 
-.float-r {
-float: right;
-}
-
 .breadcrumbs {
-padding-top: 0.5em;
-padding-left: 1em;
-padding-right: 2em;
-padding-bottom: 0.5em;
-position: sticky;
-top: 0;
+    background-color: #031642;
+    padding-top: 0.5em;
+    padding-left: 1em;
+    padding-right: 2em;
+    padding-bottom: 0.5em;
+    position: sticky;
+    top: 0;
 }
 
 .breadcrumbs>button {
-background-color: #AC9C66;
-border-radius: 15px;
-padding: 0.25em 1em 0.25em 1em;
-border: 0px inset white;
-transition: 0.25s ease-in-out;
+    background-color: #AC9C66;
+    border-radius: 10px;
+    /* padding: 0.25em 1em 0.25em 1em; */
+    border: 0px inset white;
+    transition: 0.25s ease-in-out;
+}
+
+.breadcrumbs>button>a {
+    text-decoration: none;
+    color: black;
 }
 
 .breadcrumbs>button:hover {
-box-shadow: 0px 0px 5px #AC9C66;
+    box-shadow: 0px 0px 3px #AC9C66;
 }
 
-
-/* .breadcrumbs>button>a {
-text-decoration: none;
-color: black;
-} */
+.breadcrumbs>button:hover {
+    color: white;
+}
 
 /* .container-director {
 display: grid;
