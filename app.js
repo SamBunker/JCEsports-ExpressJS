@@ -3,6 +3,8 @@ var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
 const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, getCalendar, addOrUpdateCalendarEvent } = require('./dynamo');
 const bcrypt = require('bcrypt');
+
+// TODO: Randomize salt rounds
 const saltRounds = 10;
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -127,14 +129,14 @@ function hasAuth(req, res, next) {
         const user = req.session.user;
         const auth = user.auth;
 
-        // if (auth !== "admin") { // Pull the user session auth
-        //     throw new Error("Unauthorized Access! Admin Priviledges Required.");
-        //     res.status(401).redirect('/');
-        // } 
+        if (auth !== "admin") { // Pull the user session auth (check against a salted hash instead of plain-text.)
+            throw new Error("Unauthorized Admin Panel Attempted Access:");
+        }
+        console.log("Authorized Admin Panel Access:", user.email);
         next();
     } catch (error) {
-        console.error(error.message);
-        res.status(401).redirect('/login');
+        console.error(error.message, req.session.user.email);
+        res.status(401).redirect('/');
     }
 }
 
@@ -158,7 +160,14 @@ app.get('/teamlist', async (req, res) => {
 //     }
 // })
 
-function renderTemplate(req, res, next) {
+// I THINK isUserValid and renderTemplate are trying to achieve the same goals
+// One is a middleware, the other is being passed into the render.
+// If the user is not valid (only on pages we want, redirect to /login.)
+// What if the user is valid but has invalid credentials?
+// We don't need to check every page if a user is valid. But if we're passing 
+
+// TODO: Rename renderTemplate, add an argument to pass in called "dir" which gets the page?
+function renderTemplate(dir, req, res) {
     const template = req.path.slice(1);
     const isLoggedIn = req.session.user ? true : false;
     res.render(template, { isLoggedIn });
@@ -173,21 +182,31 @@ app.get('/history', renderTemplate);
 app.get('/teamschedule', renderTemplate);
 app.get('/awards', renderTemplate);
 
+app.get('/logout', isUserValid, async (req, res) => {
+    req.session.user = "";
+    console.log("User Logged Out.")
+    res.redirect('/');
+    // Error handling?
+});
+
 app.post('/login', async (req, res) => {
     const email = req.body.email;
+    const errorTemplate = req.path.slice(1);
     try {
         const checkEmail = await checkIfEmail(email);
         if (checkEmail.Count === 0) {
             console.log("No Email Found");
-            res.status(401).send('Incorrect email or password.');
-        } else {
+                const emailError = {"error": "Incorrect email or password."};
+                res.render(errorTemplate, { emailError });
+            } else {
             const items = checkEmail.Items;
             const item = items[0];
             const storedPassword = item.password;
             bcrypt.compare(sanitizeInput(req.body.password), storedPassword, (err, result) => {
                 if (err) {
                     console.error('Error comparing passwords:', err);
-                    res.status(500).send('Internal server error.');
+                    const emailError = {"error": "Internal Server Error."};
+                    res.render(errorTemplate, { emailError });
                 } else if (result) {
                     const userInstance = new User({
                         id: item.id,
@@ -199,24 +218,28 @@ app.post('/login', async (req, res) => {
                     res.redirect('/');
                 } else {
                     console.error('Incorrect password');
-                    res.status(401).send('Incorrect email or password.');
+                    const emailError = {"error": "Incorrect email or password."};
+                    res.render(errorTemplate, { emailError });
                 }
             });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({error: 'Something went wrong'});
+        const emailError = {"error": "Something went wrong!"};
+        res.render(errorTemplate, { emailError });
     }
 });
 
 // User Registration (DynamoDB)
 app.post('/register', async (req, res) => {
     const email = req.body.email;
+    const errorTemplate = req.path.slice(1);
     try {
         const checkEmail = await checkIfEmail(email);
         if (checkEmail.Count > 0 ) {
             console.log("Email Already In Table!");
-            res.status(401).send('Email Already in Database!') //TODO: Will need changed since this releases all emails that are already registered.
+            const emailError = ["Email Already Registered!"];
+            res.render(errorTemplate, { emailError });
             return;
         } else {
             bcrypt.genSalt(saltRounds, function(err, salt) {
@@ -228,17 +251,30 @@ app.post('/register', async (req, res) => {
                     }
                     const hashPassword = hash;
                     const id = uuidv4();
+                    const newUserAuth = "user"
                     const userRegister = {
                         id: id,
                         email: email,
                         password: hashPassword,
                         username: sanitizeInput(req.body.username),
-                        auth: "user"
+                        auth: newUserAuth
                     };
+
+                    const userInstance = new User({
+                        id: id,
+                        email: email,
+                        auth: newUserAuth
+                    });
+                    
                     
                     try {
+                        console.log('User Registration Successful, Logging in User as', email);
                         addOrUpdateRegistration(userRegister);
-                        res.status(200).send("Registration Successful");
+                        const emailError = ["Registration Successful."];
+                        res.render(errorTemplate, { emailError });
+                        // Login the user here after registration
+                        req.session.user = userInstance;
+
                     } catch (error) {
                         console.error(error);
                         res.status(500).json({error: 'Error inserting user!'});
