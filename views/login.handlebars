@@ -7,6 +7,11 @@
             <fieldset>
                 <img class="mb-4" src="/img/JC-logo.png" alt="" width="300" height="auto">
                 <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+                {{#if emailError}}
+                    {{#each emailError}}
+                        <h3 class="h5 mb-3 fw-normal text-muted">{{.}}</h3>
+                    {{/each}}
+                {{/if}}
 
                 <div class="form-floating">
                     <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" required>
@@ -22,7 +27,7 @@
                 
             </fieldset>
         </form>
-        <button class="w-100 btn btn-lg btn-secondary"><a class="text-white text-decoration-none" href="/register">Register</a></button>
+        <button class="w-100 btn btn-lg btn-secondary"><a class="text-white text-decoration-none" href="/register">Need to Register?</a></button>
     </main>
     </div>
 </div>

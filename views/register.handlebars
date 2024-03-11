@@ -1,22 +1,41 @@
-<div class="container">
-    <h2>User Registration</h2><br>
-    <form action="/register" method="POST">
-        <fieldset>
-            <label for="username">Username: </label>
-            <input type="text" name="username" id="username" required>
+<head>
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<div class="text-center">
+    <main class="form-signin">
+        <form action="/register" method="POST">
+            <fieldset>
+                <img class="mb-4" src="/img/JC-logo.png" alt="" width="300" height="auto">
+                <h1 class="h3 mb-3 fw-normal">Registration</h1>
+                {{#if emailError}}
+                    {{#each emailError}}
+                        <h3 class="h5 mb-3 fw-normal text-muted">{{.}}</h3>
+                    {{/each}}
+                {{/if}}
+                
 
-            <label for="password">Password: </label>
-            <input type="text" name="password" id="password" required>
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="username" id="username" placeholder="Username" required>
+                    <label for="username">Username</label>
+                </div>
 
-            <label for="email">Email: </label>
-            <input type="email" name="email" id="email" required>
+                <div class="form-floating">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" required>
+                    <label for="email">Email address</label>
+                </div>
 
-            <input type="hidden" name="authority" value="member">
+                <div class="form-floating">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
 
-            <button type="reset">Reset</button>
-            <button type="submit">Submit</button>
-        </fieldset>
-    </form>
-    <br><a href="/login">Already have an account? Login.</a>
+                {{!-- <input type="hidden" name="authority" value="member"> --}}
+
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+
+            </fieldset>
+        </form>
+        <button class="w-100 btn btn-lg btn-secondary"><a class="text-white text-decoration-none" href="/login">Already a User?</a></button>
+    </main>
+    </div>
 </div>
-<br><br>
