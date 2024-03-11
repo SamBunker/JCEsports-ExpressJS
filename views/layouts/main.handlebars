@@ -32,6 +32,8 @@
     </ul>
     <ul class="nav nav-pills">
       {{#if isLoggedIn}}
+        <li class="notMobile nav-item"><a href="/logout" class="nav-link">Logout</a></li>
+        {{!-- If user has Admin authentication, display the admin panel. Otherwise don't. --}}
         <li class="notMobile nav-item"><a href="/admin" class="nav-link">Admin</a></li>
       {{else}}
         <li class="notMobile nav-item"><a href="/login" class="nav-link">Login</a></li>
@@ -46,6 +48,7 @@
                 <li class="nav-item"><a href="/history" class="nav-link">History</a></li>
                 {{#if isLoggedIn}}
                   <li class="nav-item"><a href="/admin" class="nav-link">Admin</a></li>
+                  <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
                 {{else}}
                   <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
                 {{/if}}
