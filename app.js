@@ -167,7 +167,7 @@ app.get('/teamlist', async (req, res) => {
 // We don't need to check every page if a user is valid. But if we're passing 
 
 // TODO: Rename renderTemplate, add an argument to pass in called "dir" which gets the page?
-function renderTemplate(dir, req, res) {
+function renderTemplate(req, res) {
     const template = req.path.slice(1);
     const isLoggedIn = req.session.user ? true : false;
     res.render(template, { isLoggedIn });
