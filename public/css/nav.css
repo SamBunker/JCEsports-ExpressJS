@@ -1,13 +1,24 @@
-  body {
+@font-face {
+  font-family: 'navfont';
+  src: url('/fonts/navfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'opensans';
+  src: url('/fonts/opensans.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
     padding-top: 4.5em;
+    font-family: 'navfont', sans-serif;
   }
   
   .nav-bg {
-    background-color: #AC9C66;
-  }
-
-  header {
-    padding-bottom: 50px;
+    background-color: #ffffff;
   }
 
   .sticky {
@@ -25,7 +36,7 @@
   }
   
   .navbar {
-    background-color: #AC9C66;
+    /* background-color: #AC9C66; */
     width: 100%;
     /* overflow: hidden; */
     text-align: left;
@@ -39,48 +50,52 @@
   
   /* Navbar styles */
   
-  .nav-list {
+  /* .nav-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
     height: 100%;
-  }
+  } */
   
-  .nav-list li {
+  /* .nav-list li {
     position: relative;
     float: left;
     margin-left: -10px;
     transform: translateY(-50%);
     top: 50%;
-    /* margin-top: 1em; */
-  }
+  } */
 
-  .nav-list span {
+  /* .nav-list span {
     position: relative;
     float: right;
     padding-right: 10px;
     top: 50%;
   }
-  
+   */
+/*   Not used
   .nav-list li a {
     display: block;
     color: white;
     text-align: center;
     padding: 8px 14px;
-    /* Adjust padding to change button size */
     text-decoration: none;
     font-size: 15px;
-  }
+  } */
   
   /* Add some spacing between navbar buttons */
-  .nav-list li+li {
+  /* .nav-list li+li {
     margin-left: 0px;
-    /* Adjust margin to change space between buttons */
+  } */
+
+  .nav-item {
+    padding-left: 1em;
   }
-  
 
   .nav-item a {
     color: black;
+    font-family: 'opensans', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .2rem;
   }
   /* Change color on hover */
   .nav-item a:hover {
@@ -107,19 +122,46 @@
     letter-spacing: 2px;
   }
 
-  @media (max-width: 800px) { 
+  .notMobile {
+    color: black;
+  }
+
+  /* .mobile {
+    margin: 0px;
+  }
+   */
+
+  /* .title {
+    line-height: 1.5em;
+  } */
+  @media (max-width: 1280px) {
     .notMobile {
       display: none;
     }
     .mobile {
       display: block;
     }
+    .title {
+      display: block;
+    }
   }
-  @media (min-width: 801px) { 
+
+  /* @media (max-width: 800px) { 
+    .notMobile {
+      display: none;
+    }
+    .mobile {
+      display: block;
+    }
+  } */
+  @media (min-width: 1281px) { 
     .notMobile {
       display: block;
     }
     .mobile {
+      display: none;
+    }
+    .title {
       display: none;
     }
   }

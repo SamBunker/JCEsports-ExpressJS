@@ -8,29 +8,33 @@
   <link rel="stylesheet" href="/css/nav.css">
 
 </head>
-<header class="d-flex flex-wrap py-3 nav-bg px-3 fixed-top">
-    <div class="notMobile">
-        <a href="/" class="d-flex mb-3 mb-md-0 text-dark">
-        <img src="/img/JC-logo.png" alt="JCE Logo" width="auto" height="40px">
-        </a>
-    </div>
+
+<header class="d-flex flex-wrap py-3 nav-bg fixed-top px-5">
+    <ul class="nav nav-pills">
+      <div class="notMobile">
+          <a href="/" class="d-flex mb-3 mb-md-0 fs-1 text-dark text-decoration-none">Junaita Esports</a>
+          {{!-- Removing image and replacing it with text instead. <img src="/img/JC-logo.png" alt="JCE Logo" width="auto" height="40px"> --}}
+          </a>
+      </div>
+    </ul>
 
     <ul class="nav nav-pills justify-content-center me-md-auto">
         <div class="mobile">
-            <nav class="nav-bg navbar-light px-2">
+            <nav class="nav-bg navbar-light d-flex align-items-center">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </nav>
         </div>
-        <li class="nav-item"><a href="/" class="nav-link" aria-current="page">Home</a></li>
-        <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
-        <li class="notMobile nav-item"><a href="/teamlist" class="nav-link">Teams</a></li>
-        <li class="nav-item"><a href="/teamschedule" class="nav-link">Schedule</a></li>
-        <li class="notMobile nav-item"><a href="/awards" class="nav-link">Awards</a></li>
-        <li class="notMobile nav-item"><a href="/history" class="nav-link">History</a></li>
     </ul>
     <ul class="nav nav-pills">
+        <li class="title fs-4 text-decoration-none"><a href="/" class="nav-link text-dark" aria-current="page">Juniata Esports</a></li>
+        <li class="notMobile nav-item"><a href="/" class="nav-link" aria-current="page">Home</a></li>
+        <li class="notMobile nav-item"><a href="/about" class="nav-link">About</a></li>
+        <li class="notMobile nav-item"><a href="/teamlist" class="nav-link">Teams</a></li>
+        <li class="notMobile nav-item"><a href="/teamschedule" class="nav-link">Schedule</a></li>
+        <li class="notMobile nav-item"><a href="/awards" class="nav-link">Awards</a></li>
+        <li class="notMobile nav-item"><a href="/history" class="nav-link">History</a></li>
       {{#if isLoggedIn}}
         <li class="notMobile nav-item"><a href="/logout" class="nav-link">Logout</a></li>
         {{!-- TODO: If user has Admin authentication, display the admin panel. Otherwise don't. --}}
@@ -42,22 +46,22 @@
     </ul>
     <div class="mobile pt-3">
     <div class="collapse" id="navbarToggleExternalContent">
-            <ul class="nav me-auto nav-pills">
-                <li class="nav-item"><a href="/teamlist" class="nav-link">Teams</a></li>
-                <li class="nav-item"><a href="/awards" class="nav-link">Awards</a></li>
-                <li class="nav-item"><a href="/history" class="nav-link">History</a></li>
-                {{#if isLoggedIn}}
-                  <li class="nav-item"><a href="/admin" class="nav-link">Admin</a></li>
-                  <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
-                {{else}}
-                  <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
-                {{/if}}
-            </ul>
+          <ul class="nav me-auto nav-pills">
+              <li class="nav-item"><a href="/teamlist" class="nav-link">Teams</a></li>
+              <li class="nav-item"><a href="/awards" class="nav-link">Awards</a></li>
+              <li class="nav-item"><a href="/history" class="nav-link">History</a></li>
+              {{#if isLoggedIn}}
+                <li class="nav-item"><a href="/admin" class="nav-link">Admin</a></li>
+                <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
+              {{else}}
+                <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
+              {{/if}}
+          </ul>
     </div>
 </div>
 </header>
 
-<body class="d-flex flex-column vh-100">
+<body class="d-flex flex-column vh-100 px-5">
   {{{body}}}
 
   <script src="/js/bootstrap.bundle.min.js"></script>

@@ -1,0 +1,65 @@
+.hero-img > img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.row > button {
+    max-width: 5em;
+}
+
+.img-equal-size {
+    height: 400px; /* Fixed height */
+    object-fit: cover;
+    width: 100%; /* Ensures the images stretch to fill the width of their container */
+}
+
+.btn-primary {
+    background-color: #061945;
+    border-color: #061945;
+    font-family: 'opensans', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .1rem;
+    font-weight: bold;
+    border-radius: 0px;
+}
+
+.container > .row {
+    gap: 5em;
+}
+
+.row {
+    flex-wrap: nowrap;
+}
+
+
+/* .row > div {
+    gap: 5em;
+} */
+
+@media (max-width: 1570px) {
+    .row {
+        flex-wrap: wrap;
+    }
+    .container > .row {
+        gap: 0;
+    }    
+}
+
+@media (max-width: 1280px) {
+    .img-equal-size {
+        height: 200px;
+    }
+
+}
+
+@media (max-width: 770px) {
+    .btn-primary {
+        display: none;
+    }
+}
+
+
+  /* @media (min-width: 1281px) { 
+    .img-equal-size {
+  } */
