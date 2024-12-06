@@ -2,7 +2,13 @@
     width: 100%;
     height: auto;
     object-fit: cover;
+    padding-bottom: 2em;
 }
+
+.btn-wrapper {
+    display: block;
+    width: 100%;
+  }
 
 .row > button {
     max-width: 5em;
@@ -32,11 +38,6 @@
     flex-wrap: nowrap;
 }
 
-
-/* .row > div {
-    gap: 5em;
-} */
-
 @media (max-width: 1570px) {
     .row {
         flex-wrap: wrap;
@@ -58,8 +59,3 @@
         display: none;
     }
 }
-
-
-  /* @media (min-width: 1281px) { 
-    .img-equal-size {
-  } */
