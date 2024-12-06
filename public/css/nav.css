@@ -14,32 +14,11 @@
 
 body {
     padding-top: 4.5em;
-    font-family: 'navfont', sans-serif;
+    font-family: 'opensans', sans-serif;
   }
   
   .nav-bg {
     background-color: #ffffff;
-  }
-
-  .sticky {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-  }
-  
-  .nav-logo {
-    float: left;
-    width: 10%;
-  }
-  
-  .navbar {
-    width: 100%;
-    text-align: left;
-    position: fixed;
-    display: block;
-    z-index: 5;
-    height: 55px;
-    border-bottom: 5px solid #333;
   }
 
   .nav-item {
@@ -52,7 +31,7 @@ body {
     text-transform: uppercase;
     letter-spacing: .2rem;
   }
-  /* Change color on hover */
+
   .nav-item a:hover {
     background-color: #0C1E3D;
     color: #f2f2f2;
@@ -74,7 +53,6 @@ body {
     font-size: 12px;
     font-weight: bold;
     color: #000;
-    /* background-color: #333; */
     letter-spacing: 2px;
   }
 
@@ -82,14 +60,6 @@ body {
     color: black;
   }
 
-  /* .mobile {
-    margin: 0px;
-  }
-   */
-
-  /* .title {
-    line-height: 1.5em;
-  } */
   @media (max-width: 1280px) {
     .notMobile {
       display: none;
@@ -102,14 +72,6 @@ body {
     }
   }
 
-  /* @media (max-width: 800px) { 
-    .notMobile {
-      display: none;
-    }
-    .mobile {
-      display: block;
-    }
-  } */
   @media (min-width: 1281px) { 
     .notMobile {
       display: block;

@@ -15,9 +15,9 @@
 }
 
 .img-equal-size {
-    height: 400px; /* Fixed height */
+    height: 400px;
     object-fit: cover;
-    width: 100%; /* Ensures the images stretch to fill the width of their container */
+    width: 100%;
 }
 
 .btn-primary {
@@ -55,7 +55,8 @@
 }
 
 @media (max-width: 770px) {
-    .btn-primary {
-        display: none;
+    div > a, div > img {
+        margin-bottom: 1em;
     }
+
 }
