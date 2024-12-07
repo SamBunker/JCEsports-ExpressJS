@@ -1,7 +1,7 @@
 const express = require('express');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
-const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, getCalendar, addOrUpdateCalendarEvent } = require('./dynamo');
+const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, deleteUserFromDB, getCalendar, addOrUpdateCalendarEvent } = require('./dynamo');
 const bcrypt = require('bcrypt');
 
 // TODO: Randomize salt rounds
@@ -28,11 +28,10 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 // 1 day
+      maxAge: 1000 * 60 * 60 // 1 hour
     }
   }));
 
-// RENDER TO FETCH INFO FROM DYNAMODB
 // RENDER TO FETCH INFO FROM DYNAMODB
 app.get('/students', isUserValid, hasAuth, async (req, res) => {
     try {
@@ -54,10 +53,27 @@ app.get('/json_calendar', async (req, res) => {
     }
 })
 
-app.get('/users', isUserValid, hasAuth, async (req, res) => {
+
+
+// SAMPLE CODE FOR PULLING USERS FROM DATABASE
+// app.get('/teamlist', async (req, res) => {
+//     try {
+//         const students = await getStudents();
+//         const items = students["Items"];
+//         const template = req.path.slice(1);
+//         res.render(template, { items }) // Does not render the text. maybe a json?
+//     } catch (error) {
+//         console.error(error.message);
+//     }
+// });
+
+app.get('/admin', isUserValid, hasAuth, async (req, res) => {
     try {
         const users = await getUsers();
-        res.json(users);
+        const items = users["Items"];
+        const template = req.path.slice(1);
+        res.render(template, {items})
+        // res.json(users);
     } catch (error) {
         console.error(err);
         res.status(500).json({err: 'Something went wrong'});
@@ -124,6 +140,7 @@ function isUserValid(req, res, next) {
 }
 
 // Does user have auth for admin panel
+// TODO fix so it doesn't pull user.auth from plain text but from the user's db-auth level
 function hasAuth(req, res, next) {
     try {
         const user = req.session.user;
@@ -150,6 +167,8 @@ app.get('/teamlist', async (req, res) => {
         console.error(error.message);
     }
 });
+
+
 
 // app.get('/teamschedule', async (req, res) => {
 //     try {
@@ -289,9 +308,9 @@ app.post('/register', async (req, res) => {
 });
 
 // ADMIN DASHBOARD
-app.post('/admin', (req, res) => {
+app.post('/admin', async (req, res) => {
     // Make this more than just posting a new user. Make it check to see if that's what the admin wanted. If it was, then post it.
-    const post_type = sanitizeInput(req.body.adminOption);
+    const post_type = req.body.adminOption;
     
     if ( post_type == "create_user") {
         const playerCreation = {
@@ -325,6 +344,15 @@ app.post('/admin', (req, res) => {
         } catch (error) {
             console.error(error);
             res.status(500).json({error: 'Error inserting event!'}); 
+        }
+    } else if (req.body.deleteUser === "delete_user" && req.body.userId) {
+        const userId = req.body.userId;
+        try {
+            await deleteUserFromDB(userId);
+            res.status(200).send("User Deleted Successful");
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Failed to delete user ' });
         }
     }
 });

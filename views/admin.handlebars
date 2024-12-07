@@ -6,55 +6,71 @@
 <div class="nav-block"></div>
     <div class="container">
         <div class="col">
-            <h4>Calendar</h4>
-            <div class="btn-group">
-                <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" onclick="showDiv('controlCalendar'), hideDiv('controlPlayer')"/>
+            <h4>Admin Actions</h4>
+
+            <!-- Dropdown Button -->
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Select Action
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="#" onclick="showActionGroup('calendarEvent')">Calendar Event Actions</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="showActionGroup('teamRoster')">Team Roster Actions</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="showActionGroup('userActions')">Website User Actions</a></li>
+                </ul>
+            </div>
+
+            <!-- Action Groups -->
+            <!-- Calendar Event Actions -->
+            <div id="calendarEvent" class="btn-group" style="display:none;">
+                <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" onclick="showDiv('newCalendar')" />
                 <label class="btn btn-outline-primary" for="option1">Add Calendar Event</label>
 
-                <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" />
-                <label class="btn btn-outline-primary" for="option2">Delete Calendar Event</label>
+                <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" onclick="showDiv('editCalendar')" />
+                <label class="btn btn-outline-primary" for="option2">Edit Calendar Event</label>
 
-                <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" />
-                <label class="btn btn-outline-primary" for="option3">Edit Calendar Event</label>
+                <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" onclick="showDiv('deleteCalendar')" />
+                <label class="btn btn-outline-primary" for="option3">Delete Calendar Event</label>
 
-                <input type="radio" class="btn-check" name="options" id="option4" autocomplete="off" onclick="showDiv('controlPlayer'), hideDiv('controlCalendar')" />
+            </div>
+
+            <!-- Team Roster Actions -->
+            <div id="teamRoster" class="btn-group" style="display:none;">
+                <input type="radio" class="btn-check" name="options" id="option4" autocomplete="off" onclick="showDiv('newPlayer')" />
                 <label class="btn btn-outline-primary" for="option4">New Player</label>
 
-                <input type="radio" class="btn-check" name="options" id="option5" autocomplete="off" />
-                <label class="btn btn-outline-primary" for="option5">New User</label>
-
-                <input type="radio" class="btn-check" name="options" id="option6" autocomplete="off" />
-                <label class="btn btn-outline-primary" for="option6">New User</label>
-            </div>
-
-            <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                Dropdown Button
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="#">Action 1</a></li>
-                <li><a class="dropdown-item" href="#">Another Action</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-            </div>
-
-
-            {{!-- </div>
-            <h4>Player</h4>
-            <div class="btn-group">
+                <input type="radio" class="btn-check" name="options" id="option5" autocomplete="off" onclick="showDiv('editPlayer')" />
+                <label class="btn btn-outline-primary" for="option5">Edit Player</label>
                 
-            </div> --}}
-        
-                {{!-- <label for="adminOption">Option</label>
-                <select name="adminOption" id="adminOption" required>
-                    <option value="calendarEvent">Calendar Event</option>
-                    <option value=""></option>
-                    <option value=""></option>
-                </select> --}}
+                <input type="radio" class="btn-check" name="options" id="option6" autocomplete="off" onclick="showDiv('deletePlayer')" />
+                <label class="btn btn-outline-primary" for="option6">Delete Player</label>
+            </div>
+
+            <!-- Website User Actions -->
+            <div id="userActions" class="btn-group" style="display:none;">
+                <input type="radio" class="btn-check" name="options" id="option7" autocomplete="off" onclick="showDiv('newUser')" />
+                <label class="btn btn-outline-primary" for="option7">Create User</label>
+
+                <input type="radio" class="btn-check" name="options" id="option8" autocomplete="off" onclick="showDiv('editUser')" />
+                <label class="btn btn-outline-primary" for="option8">Edit User</label>
+
+                <input type="radio" class="btn-check" name="options" id="option9" autocomplete="off" onclick="showDiv('deleteUser')" />
+                <label class="btn btn-outline-primary" for="option9">Delete User</label>
+            </div>
+            
 
             <div class="col-sm-9 bg-light p-5">
+                <div id="admin-welcome">
+                    <div class="container">
+                        <h1>Welcome to the Admin Panel!</h1>
+                        <p>Please select an action above.</p>
+                    </div>
+                </div>
+                
+                {{!-- CREATE USER SECTION --}}
                 <form action="/admin" method="post">
-                    <div id="controlPlayer">
+                    <input type="hidden" name="adminOption" value="create_user">
+                    <div id="newPlayer" style="display:none;">
                         <div class="container">
                             <h1>Add Player to Roster</h1>
                             <div class="column">
@@ -108,9 +124,47 @@
                         </div>
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </div>                
-                    </form>
+                </form>
+                    
+                <form action="/admin" method="post">
+                    <input type="hidden" name="deleteUser" value="delete_user">
+                    <input type="hidden" name="userId" value="{{id}}">
+                    <div id="deleteUser" style="display:none;">
+                        <div class="container">
+                            <h1>Team List</h1>
+                            <p>
+                                <table>
+                                <thead>
+                                    <tr style="background-color: #0C1E3D;">
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>Username</th>
+                                    <th>Authentication</th>
+                                    <th>Delete User</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {{#each items }}
+                                    <tr>
+                                    <td>{{id}}</td>
+                                    <td>{{email}}</td>
+                                    <td>{{username}}</td>
+                                    <td>{{auth}}</td>
+                                    <td><button class="btn btn-danger" type="submit">Delete</button></td>
+                                    </tr>
+                                {{/each}}
+                                </tbody>
+                                </table>
+                            </p>
+                        </div>
+                    </div>
+                </form>
+
+
+                    {{!-- CREATE EVENT SECTION --}}
                     <form action="/admin" method="post">
-                    <div id="controlCalendar">
+                        <input type="hidden" name="adminOption" value="create_event">
+                        <div id="newCalendar" style="display:none;">
                         <h1>Add Calendar Event</h1>
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </div>

@@ -1,0 +1,28 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Add the ability to close user registration - Admin Panel
+Add a date picker to calendar event creation - Admin Panel
+Polish ability to add people to teams. Add images, etc.
+
+/teamlist when logged in doesn't show admin or logout option, only login option. (same as /admin)
+Navbar is set to sticky which means absolute on the page. Therefor there needs to be in main.handlebars an object that pushes everything down to the same height as the nav bar
+Create website configuration file

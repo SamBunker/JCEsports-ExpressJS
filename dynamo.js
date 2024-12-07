@@ -7,7 +7,9 @@ AWS.config.update({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
-const dynamoClient = new AWS.DynamoDB.DocumentClient();
+const dynamoClient = new AWS.DynamoDB.DocumentClient({
+    convertEmptyValues: true
+});
 const TABLE_NAME = "jcesports-db";
 const LOGIN_TABLE = 'jcesports-db-users'
 const CALENDAR_TABLE = 'jcesports-db-calendar'
@@ -53,6 +55,22 @@ const getUsers = async () => {
     const users = await dynamoClient.scan(params).promise();
     // console.log(users);
     return users;
+}
+
+async function deleteUserFromDB(userId) {
+    const params = {
+        TableName: LOGIN_TABLE,
+        Key: {
+            id: userId,
+        }
+    };
+    try {
+        await docClient.delete(params).promise();
+        console.log(`User ${userId} deleted successfully.`);
+    } catch (error) {
+        console.error(`Error deleting user ${userId}:`, error);
+        throw new Error('Failed to delete user from database');
+    }
 }
 
 const addOrUpdateRegistration = async (array) => {
@@ -111,6 +129,7 @@ module.exports = {
     checkIfEmail,
     addOrUpdateRegistration,
     getUsers,
+    deleteUserFromDB,
     getCalendar,
     addOrUpdateCalendarEvent
 };
