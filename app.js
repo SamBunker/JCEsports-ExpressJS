@@ -345,14 +345,22 @@ app.post('/admin', async (req, res) => {
             console.error(error);
             res.status(500).json({error: 'Error inserting event!'}); 
         }
+
     } else if (req.body.deleteUser === "delete_user" && req.body.userId) {
-        const userId = req.body.userId;
+        const {userId} = req.body.userId;
+        console.log("Type of userId:", typeof userId);
+        console.log("CHECK #1");
+
         try {
-            await deleteUserFromDB(userId);
+            const deleteThisUser = await deleteUserFromDB(userId);
+            res.json(deleteThisUser);
+            console.log("CHECK #2");
             res.status(200).send("User Deleted Successful");
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Failed to delete user ' });
+            console.error(error.__type);
+            console.log("CHECK #ERROR");
+            res.status(500).json({ error: 'Failed to delete user' });
         }
     }
 });
@@ -370,7 +378,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((req, res) => {
-    res.status(404).send('404 - Not found');
+    res.render('404');
 });
 
 app.listen(app.get('port'), function() {

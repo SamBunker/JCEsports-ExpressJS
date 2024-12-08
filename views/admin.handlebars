@@ -125,8 +125,12 @@
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </div>                
                 </form>
-                    
-                <form action="/admin" method="post">
+                
+
+
+
+                
+                {{!-- <form action="/admin" method="post">
                     <input type="hidden" name="deleteUser" value="delete_user">
                     <input type="hidden" name="userId" value="{{id}}">
                     <div id="deleteUser" style="display:none;">
@@ -158,7 +162,27 @@
                             </p>
                         </div>
                     </div>
-                </form>
+                </form> --}}
+
+                <div id="deleteUser" style="display:none;">
+                    {{#each items}}
+                        <form action="/admin" method="post" class="delete-form">
+                            <input type="hidden" name="deleteUser" value="delete_user">
+                            <!-- Hidden input field with the specific user ID -->
+                            <input type="hidden" name="userId" value="{{id}}">
+                            
+                            <div class="user-item">
+                                <h3>{{username}}</h3>
+                                <p>Email: {{email}}</p>
+                                <p>Authentication: {{auth}}</p>
+                                
+                                <!-- Button to submit the form and delete the user -->
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </form>
+                    {{/each}}
+                </div>
+                
 
 
                     {{!-- CREATE EVENT SECTION --}}
