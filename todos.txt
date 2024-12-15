@@ -26,3 +26,18 @@ Polish ability to add people to teams. Add images, etc.
 /teamlist when logged in doesn't show admin or logout option, only login option. (same as /admin)
 Navbar is set to sticky which means absolute on the page. Therefor there needs to be in main.handlebars an object that pushes everything down to the same height as the nav bar
 Create website configuration file
+
+
+- Dynamic Rendering of URLs - think about Website Admin configuration per page
+{{#each nav ~}}
+  <a href="{{url}}">
+    {{~#if test}}
+      {{~title}}
+    {{~^~}}
+      Empty
+    {{~/if~}}
+  </a>
+{{~/each}}
+
+Make sure posting and getting has checks for user auth
+..."/admin", isUserValid, hasAuth, async (req, res)...
