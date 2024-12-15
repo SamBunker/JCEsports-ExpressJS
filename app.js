@@ -72,10 +72,16 @@ app.get('/admin', isUserValid, hasAuth, async (req, res) => {
     req.session.actionFeedback = null;
 
     try {
+        // Fetch Players from List
+        const players = await getStudents();
+        const playerList = players["Items"];
+
+
+
         const users = await getUsers();
-        const items = users["Items"];
+        const userList = users["Items"];
         const template = req.path.slice(1);
-        res.render(template, {items, actionFeedback})
+        res.render(template, {userList, playerList, actionFeedback})
         // res.json(users);
     } catch (error) {
         console.error(err);
@@ -298,11 +304,15 @@ app.post('/admin', isUserValid, hasAuth, async (req, res) => {
         }
         try {
             addOrUpdateStudent(playerCreation);
-            res.status(200).send("Creation Successful");
+            console.log(`Successfully Created Player: ${playerName}`);
+            req.session.actionFeedback = {error: `Successfully Created Player: ${playerName}`, refresh: "You may need to refresh."};
         } catch (error) {
             console.error(error);
-            res.status(500).json({error: 'Error inserting student!'});
+            console.log(`Error Creating Player: ${playerName}`);
+            req.session.actionFeedback = {error: `Error Creating Player: ${playerName}`, refresh: "You may need to refresh."};
         }
+        res.redirect('/admin');
+        
     } else if ( post_type == "create_event" ) {
         const newEvent = {
             id: uuidv4(),
