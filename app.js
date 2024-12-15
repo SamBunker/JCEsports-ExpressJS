@@ -321,11 +321,6 @@ app.post('/admin', isUserValid, hasAuth, async (req, res) => {
     } else if (post_type == "delete_user" && req.body.userEmail && req.body.userId) {
         const userEmail = req.body.userEmail;
         const userId = req.body.userId;
-        // console.log(await getUserFromDB(userEmail));
-        console.log("userEmail selected:", userEmail);
-        console.log("userId:", userId);
-        console.log("Type of userEmail:", typeof userEmail);
-        console.log("CHECK #1");
 
         try {
             const user = req.session.user;
@@ -337,13 +332,13 @@ app.post('/admin', isUserValid, hasAuth, async (req, res) => {
                 return
             }
             await deleteUserFromDB(userEmail, userId);
-            console.log("CHECK #2");
+            console.log(`Successfully Deleted User Account: ${userEmail}`);
             req.session.actionFeedback = {error: `Successfully Deleted User Account: ${userEmail}`, refresh: "You may need to refresh."};
             res.redirect('/admin');
         } catch (error) {
             console.error(error);
             console.error(error.__type);
-            console.log("CHECK #ERROR");
+            console.log(`Failed to Delete User Account: ${userEmail}`);
             req.session.actionFeedback = {error: `Failed to Deleted User Account: ${userEmail}`, refresh: "You may need to refresh."};
             res.redirect('/admin');
         }
