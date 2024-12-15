@@ -6,6 +6,11 @@
 <div class="nav-block"></div>
     <div class="container">
         <div class="col">
+            {{#if actionFeedback}}
+                {{#each actionFeedback}}
+                    <h3 class="h5 mb-3 fw-normal text-muted">{{.}}</h3>
+                {{/each}}
+            {{/if}}
             <h4>Admin Actions</h4>
 
             <!-- Dropdown Button -->
@@ -67,9 +72,9 @@
                     </div>
                 </div>
                 
-                {{!-- CREATE USER SECTION --}}
+                {{!-- CREATE PLAYER SECTION --}}
                 <form action="/admin" method="post">
-                    <input type="hidden" name="adminOption" value="create_user">
+                    <input type="hidden" name="post_type" value="create_player">
                     <div id="newPlayer" style="display:none;">
                         <div class="container">
                             <h1>Add Player to Roster</h1>
@@ -126,6 +131,27 @@
                     </div>                
                 </form>
                 
+                <form action="/admin" method="post">
+                    <input type="hidden" name="post_type" value="create_user">
+                    <div id="newUser" style="display:none;">
+                        <div class="container">
+                            <h1>Add User to Roster</h1>
+                            <div class="column">
+                                <label for="userEmail">User Email: </label>
+                                <input type="email" name="userEmail" id="userEmail" required>
+                            </div>
+                            <div class="column">
+                                <label for="userName">Username: </label>
+                                <input type="text" name="userName" id="userName" required>
+                            </div>
+                            <div class="column">
+                                <label for="password">Password: </label>
+                                <input type="text" name="password" id="password" required>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </div>
+                </form>
 
 
 
@@ -167,14 +193,17 @@
                 <div id="deleteUser" style="display:none;">
                     {{#each items}}
                         <form action="/admin" method="post" class="delete-form">
-                            <input type="hidden" name="deleteUser" value="delete_user">
+                            <input type="hidden" name="post_type" value="delete_user">
                             <!-- Hidden input field with the specific user ID -->
+                            <input type="hidden" name="userEmail" value="{{email}}">
                             <input type="hidden" name="userId" value="{{id}}">
+
                             
                             <div class="user-item">
                                 <h3>{{username}}</h3>
                                 <p>Email: {{email}}</p>
                                 <p>Authentication: {{auth}}</p>
+                                <p>ID: {{id}}</p>
                                 
                                 <!-- Button to submit the form and delete the user -->
                                 <button type="submit" class="btn btn-danger">Delete</button>
@@ -187,7 +216,7 @@
 
                     {{!-- CREATE EVENT SECTION --}}
                     <form action="/admin" method="post">
-                        <input type="hidden" name="adminOption" value="create_event">
+                        <input type="hidden" name="post_type" value="create_event">
                         <div id="newCalendar" style="display:none;">
                         <h1>Add Calendar Event</h1>
                         <button class="btn btn-primary" type="submit">Submit</button>
