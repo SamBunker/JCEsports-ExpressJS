@@ -312,20 +312,26 @@ app.post('/admin', isUserValid, hasAuth, async (req, res) => {
             req.session.actionFeedback = {error: `Error Creating Player: ${playerName}`, refresh: "You may need to refresh."};
         }
         res.redirect('/admin');
-        
+
     } else if ( post_type == "create_event" ) {
+        const eventTitle = req.body.title;
+
         const newEvent = {
             id: uuidv4(),
-            title: sanitizeInput(req.body.title),
+            title: eventTitle,
             start: sanitizeInput(req.body.start),
             end: sanitizeInput(req.body.end)
         }
         try {
             addOrUpdateCalendarEvent(newEvent);
-            res.status(200).send("Calendar Event Added!");
+            console.log(`Successfully Deleted Player: ${eventTitle}`);
+            req.session.actionFeedback = {error: `Successfully Deleted Player: ${eventTitle}`, refresh: "You may need to refresh."};
+            res.redirect('/admin');
         } catch (error) {
             console.error(error);
-            res.status(500).json({error: 'Error inserting event!'}); 
+            console.log(`Successfully Deleted Player: ${eventTitle}`);
+            req.session.actionFeedback = {error: `Successfully Deleted Player: ${eventTitle}`, refresh: "You may need to refresh."};
+            res.redirect('/admin');
         }
 
     } else if (post_type == "delete_player" && req.body.playerId) {
