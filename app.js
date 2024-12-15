@@ -318,6 +318,22 @@ app.post('/admin', isUserValid, hasAuth, async (req, res) => {
             res.status(500).json({error: 'Error inserting event!'}); 
         }
 
+    } else if (post_type == "delete_player" && req.body.playerId) {
+        const playerId = req.body.playerId;
+        const playerName = req.body.playerName;
+        try {
+            await deleteStudent(playerId);
+            console.log(`Successfully Deleted Player: ${playerName}`);
+            req.session.actionFeedback = {error: `Successfully Deleted Player: ${playerName}`, refresh: "You may need to refresh."};
+            res.redirect('/admin');
+        } catch (error) {
+            console.error(error);
+            console.error(error.__type);
+            console.log(`Failed to Delete Player: ${playerName}`);
+            req.session.actionFeedback = {error: `Failed to Deleted Player: ${playerName}`, refresh: "You may need to refresh."};
+            res.redirect('/admin');
+        }
+
     } else if (post_type == "delete_user" && req.body.userEmail && req.body.userId) {
         const userEmail = req.body.userEmail;
         const userId = req.body.userId;

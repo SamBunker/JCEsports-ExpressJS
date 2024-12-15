@@ -130,12 +130,36 @@
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </div>                
                 </form>
+
+                <div id="deletePlayer" style="display:none;">
+                    {{#each items}}
+                        <form action="/admin" method="post" class="delete-form">
+                            <input type="hidden" name="post_type" value="delete_player">
+                            <input type="hidden" name="playerId" value="{{id}}">
+                            <input type="hidden" name="playerName" value="{{name}}">
+
+                            <div class="user-item">
+                                <h3>{{name}}</h3>
+                                <p>Id: {{id}}</p>
+                                <p>Gamer Tag: {{gamertag}}</p>
+                                <p>Grade: {{grade}}</p>
+                                <p>Number: {{number}}</p>
+                                <p>Position: {{position}}</p>
+                                <p>Team: {{team}}</p>
+                                <p>Hometown Highschool: {{hometown_highschool}}</p>
+                                <p>Country Code: {{country_code}}</p>
+                                
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </form>
+                    {{/each}}
+                </div>
                 
                 <form action="/admin" method="post">
                     <input type="hidden" name="post_type" value="create_user">
                     <div id="newUser" style="display:none;">
                         <div class="container">
-                            <h1>Add User to Roster</h1>
+                            <h1>Create a New User</h1>
                             <div class="column">
                                 <label for="userEmail">User Email: </label>
                                 <input type="email" name="userEmail" id="userEmail" required>
@@ -201,18 +225,15 @@
                     {{#each items}}
                         <form action="/admin" method="post" class="delete-form">
                             <input type="hidden" name="post_type" value="delete_user">
-                            <!-- Hidden input field with the specific user ID -->
                             <input type="hidden" name="userEmail" value="{{email}}">
                             <input type="hidden" name="userId" value="{{id}}">
 
-                            
                             <div class="user-item">
                                 <h3>{{username}}</h3>
                                 <p>Email: {{email}}</p>
                                 <p>Authentication: {{auth}}</p>
                                 <p>ID: {{id}}</p>
                                 
-                                <!-- Button to submit the form and delete the user -->
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </div>
                         </form>
