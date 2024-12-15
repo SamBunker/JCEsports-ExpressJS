@@ -127,38 +127,6 @@ app.delete('/students/:id', isUserValid, hasAuth, async (req, res) => {
         res.status(500).json({error: 'Something went wrong'});
     }
 });
-// RENDER TO FETCH INFO FROM DYNAMODB
-// RENDER TO FETCH INFO FROM DYNAMODB
-
-function isUserValid(req, res, next) {
-    try {
-        if (!req.session.user || typeof req.session.user !== 'object') {
-            throw new Error('Invalid user session!');
-        }
-        next();
-    } catch (error) {
-        console.error(error.message);
-        res.status(401).redirect('/login');
-    }
-}
-
-// Does user have auth for admin panel
-// TODO fix so it doesn't pull user.auth from plain text but from the user's db-auth level
-function hasAuth(req, res, next) {
-    try {
-        const user = req.session.user;
-        const auth = user.auth;
-
-        if (auth !== "admin") { // Pull the user session auth (check against a salted hash instead of plain-text.)
-            throw new Error("Unauthorized Admin Panel Attempted Access:");
-        }
-        console.log("Authorized Admin Panel Access:", user.email);
-        next();
-    } catch (error) {
-        console.error(error.message, req.session.user.email);
-        res.status(401).redirect('/');
-    }
-}
 
 app.get('/teamlist', async (req, res) => {
     try {
@@ -311,6 +279,7 @@ app.post('/register', async (req, res) => {
 });
 
 // ADMIN DASHBOARD
+//isUserValid, hasAuth,
 app.post('/admin', isUserValid, hasAuth, async (req, res) => {
     // Make this more than just posting a new user. Make it check to see if that's what the admin wanted. If it was, then post it.
     const post_type = req.body.post_type;
@@ -359,16 +328,23 @@ app.post('/admin', isUserValid, hasAuth, async (req, res) => {
         console.log("CHECK #1");
 
         try {
-            if (userEmail == TODO1)
+            const user = req.session.user;
+            const email = user.email;
+            if (userEmail == email) {
+                console.log("Attempting to delete own account");
+                req.session.actionFeedback = {error: `You cannot delete your own account! ${userEmail}`};
+                res.redirect('/admin');
+                return
+            }
             await deleteUserFromDB(userEmail, userId);
             console.log("CHECK #2");
-            req.session.actionFeedback = {error: `Successfully Deleted User Account: ${userEmail}`};
+            req.session.actionFeedback = {error: `Successfully Deleted User Account: ${userEmail}`, refresh: "You may need to refresh."};
             res.redirect('/admin');
         } catch (error) {
             console.error(error);
             console.error(error.__type);
             console.log("CHECK #ERROR");
-            req.session.actionFeedback = {error: `Failed to Deleted User Account: ${userEmail}`};
+            req.session.actionFeedback = {error: `Failed to Deleted User Account: ${userEmail}`, refresh: "You may need to refresh."};
             res.redirect('/admin');
         }
     } else if (post_type == "create_user") {
@@ -391,19 +367,19 @@ app.post('/admin', isUserValid, hasAuth, async (req, res) => {
                         }
                         const hashPassword = hash;
                         const id = uuidv4();
-                        const newUserAuth = "user"
                         const userEmail = sanitizeInput(req.body.userEmail);
                         const username = sanitizeInput(req.body.userName);
+                        const auth = sanitizeInput(req.body.auth);
                         const newUser = {
                             email: userEmail,
                             id: id,
-                            auth: newUserAuth,
+                            auth: auth,
                             password: hashPassword,
                             username: username
                         }
                         addOrUpdateRegistration(newUser);
                         console.log('User Registration Successful. User created by email:', userEmail);
-                        req.session.actionFeedback = {"error": "Successfully Created User Account."};
+                        req.session.actionFeedback = {error: `Successfully Created User Account: ${userEmail}`, refresh: "You may need to refresh."};
                         res.redirect('/admin');
                     });
                 });
@@ -437,6 +413,40 @@ app.use((err, req, res, next) => {
 app.use((req, res) => {
     res.render('404');
 });
+
+// RENDER TO FETCH INFO FROM DYNAMODB
+// RENDER TO FETCH INFO FROM DYNAMODB
+
+function isUserValid(req, res, next) {
+    try {
+        if (!req.session.user || typeof req.session.user !== 'object') {
+            throw new Error('Invalid user session!');
+        }
+        next();
+    } catch (error) {
+        console.error(error.message);
+        res.status(401).redirect('/login');
+    }
+}
+
+// Does user have auth for admin panel
+// TODO fix so it doesn't pull user.auth from plain text but from the user's db-auth level--
+function hasAuth(req, res, next) {
+    try {
+        const user = req.session.user;
+        const auth = user.auth;
+
+        if (auth !== "admin") { // Pull the user session auth (check against a salted hash instead of plain-text.)
+            throw new Error("Unauthorized Admin Panel Attempted Access:");
+        }
+        console.log("Authorized Admin Panel Access:", user.email);
+        next();
+    } catch (error) {
+        console.error(error.message, req.session.user.email);
+        res.status(401).redirect('/');
+    }
+}
+
 
 app.listen(app.get('port'), function() {
     console.log('Started express app on http://localhost:' +
