@@ -1,7 +1,7 @@
 const express = require('express');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
-const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, deleteUserFromDB, getCalendar, addOrUpdateCalendarEvent } = require('./dynamo');
+const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, deleteUserFromDB, getUserFromDB, getCalendar, addOrUpdateCalendarEvent } = require('./dynamo');
 const bcrypt = require('bcrypt');
 
 // TODO: Randomize salt rounds
@@ -68,11 +68,14 @@ app.get('/json_calendar', async (req, res) => {
 // });
 
 app.get('/admin', isUserValid, hasAuth, async (req, res) => {
+    const actionFeedback = req.session.actionFeedback || null;
+    req.session.actionFeedback = null;
+
     try {
         const users = await getUsers();
         const items = users["Items"];
         const template = req.path.slice(1);
-        res.render(template, {items})
+        res.render(template, {items, actionFeedback})
         // res.json(users);
     } catch (error) {
         console.error(err);
@@ -308,11 +311,11 @@ app.post('/register', async (req, res) => {
 });
 
 // ADMIN DASHBOARD
-app.post('/admin', async (req, res) => {
+app.post('/admin', isUserValid, hasAuth, async (req, res) => {
     // Make this more than just posting a new user. Make it check to see if that's what the admin wanted. If it was, then post it.
-    const post_type = req.body.adminOption;
+    const post_type = req.body.post_type;
     
-    if ( post_type == "create_user") {
+    if ( post_type == "create_player") {
         const playerCreation = {
             id: uuidv4(),
             number: sanitizeInput(req.body.playernumber),
@@ -346,21 +349,75 @@ app.post('/admin', async (req, res) => {
             res.status(500).json({error: 'Error inserting event!'}); 
         }
 
-    } else if (req.body.deleteUser === "delete_user" && req.body.userId) {
-        const {userId} = req.body.userId;
-        console.log("Type of userId:", typeof userId);
+    } else if (post_type == "delete_user" && req.body.userEmail && req.body.userId) {
+        const userEmail = req.body.userEmail;
+        const userId = req.body.userId;
+        // console.log(await getUserFromDB(userEmail));
+        console.log("userEmail selected:", userEmail);
+        console.log("userId:", userId);
+        console.log("Type of userEmail:", typeof userEmail);
         console.log("CHECK #1");
 
         try {
-            const deleteThisUser = await deleteUserFromDB(userId);
-            res.json(deleteThisUser);
+            if (userEmail == TODO1)
+            await deleteUserFromDB(userEmail, userId);
             console.log("CHECK #2");
-            res.status(200).send("User Deleted Successful");
+            req.session.actionFeedback = {error: `Successfully Deleted User Account: ${userEmail}`};
+            res.redirect('/admin');
         } catch (error) {
             console.error(error);
             console.error(error.__type);
             console.log("CHECK #ERROR");
-            res.status(500).json({ error: 'Failed to delete user' });
+            req.session.actionFeedback = {error: `Failed to Deleted User Account: ${userEmail}`};
+            res.redirect('/admin');
+        }
+    } else if (post_type == "create_user") {
+        const userEmail = sanitizeInput(req.body.userEmail)
+        // Check if email already exists [done]
+        // If not for either, create account, pull username, hash password, try to add it to the system
+        // else, throw error.
+
+        try {
+            const checkEmail = await checkIfEmail(userEmail);
+            if (checkEmail.Count === 0) {
+                console.log("No Email Found, Proceeding");
+                    
+                bcrypt.genSalt(saltRounds, function(err, salt) {
+                    bcrypt.hash(sanitizeInput(req.body.password), salt, function(err, hash) {
+                        if (err) {
+                            console.error('Error hasing password:', err);
+                            res.status(500).send('Error Hashing Password!');
+                            return;
+                        }
+                        const hashPassword = hash;
+                        const id = uuidv4();
+                        const newUserAuth = "user"
+                        const userEmail = sanitizeInput(req.body.userEmail);
+                        const username = sanitizeInput(req.body.userName);
+                        const newUser = {
+                            email: userEmail,
+                            id: id,
+                            auth: newUserAuth,
+                            password: hashPassword,
+                            username: username
+                        }
+                        addOrUpdateRegistration(newUser);
+                        console.log('User Registration Successful. User created by email:', userEmail);
+                        req.session.actionFeedback = {"error": "Successfully Created User Account."};
+                        res.redirect('/admin');
+                    });
+                });
+                
+                    // const emailError = {"error": "Incorrect email or password."};
+                    // res.render(errorTemplate, { emailError });
+            } else {
+                // Sucess, do things here
+                res.status(200).send("Email Already in System!");
+                
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({error: 'Error inserting user!'});
         }
     }
 });
