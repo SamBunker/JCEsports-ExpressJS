@@ -55,14 +55,30 @@ const getUsers = async () => {
     return users;
 }
 
-const deleteUserFromDB = async (id) => {
+const deleteUserFromDB = async (email, id) => {
     const params = {
         TableName: LOGIN_TABLE,
         Key: {
-            id
+            email: email,
+            id: id,
         }
     }
-    return await dynamoClient.delete(params).promise();
+    try {
+        await dynamoClient.delete(params).promise();
+        console.log(`User with email ${email} and id ${id} deleted successfully.`);
+    } catch (err) {
+        console.error('Error deleting user', err);
+    }
+};
+
+const getUserFromDB = async (email) => {
+    const params = {
+        TableName: 'LOGIN_TABLE',
+        Key: {
+            email
+        }
+    }
+    return await dynamoClient.get(params).promise();
 };
 
 const addOrUpdateRegistration = async (array) => {
@@ -122,6 +138,7 @@ module.exports = {
     addOrUpdateRegistration,
     getUsers,
     deleteUserFromDB,
+    getUserFromDB,
     getCalendar,
     addOrUpdateCalendarEvent
 };
