@@ -1,6 +1,8 @@
 <head>
     <link rel="stylesheet" href="/css/admin.css">
     <script src="/js/admin.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
 <div class="nav-block"></div>
@@ -80,19 +82,19 @@
                             <h1>Add Player to Roster</h1>
                             <div class="column">
                                 <label for="playernumber">Jersey Number: </label>
-                                <input type="number" name="playernumber" id="playernumber" required>
+                                <input type="number" class="form-control" name="playernumber" id="playernumber" required>
                             </div>
                             <div class="column">
                                 <label for="playername">Full Name: </label>
-                                <input type="text" name="playername" id="playername" required>
+                                <input type="text" class="form-control" name="playername" id="playername" required>
                             </div>
                             <div class="column">
                                 <label for="playergamertag">Gamer Tag: </label>
-                                <input type="text" name="playergamertag" id="playergamertag" required>
+                                <input type="text" class="form-control" name="playergamertag" id="playergamertag" required>
                             </div>
                             <div class="column">
                                 <label for="playerteam">Team: </label>
-                                <select id="playerteam" name="playerteam">
+                                <select id="playerteam" name="playerteam" class="form-control" >
                                     <option value="staff">Team Staff</option>
                                     <option value="leagueoflegends">League of Legends</option>
                                     <option value="rocketleague">Rocket League</option>
@@ -106,11 +108,11 @@
                             </div>
                             <div class="column">
                                 <label for="playerposition">Position: </label>
-                                <input type="text" name="playerposition" id="playerposition" required>
+                                <input type="text" class="form-control" name="playerposition" id="playerposition" required>
                             </div>
                             <div class="column">
                                 <label for="playergrade">Grade: </label>
-                                <select id="playergrade" name="playergrade">
+                                <select id="playergrade" class="form-control" name="playergrade">
                                     <option value="freshman">Freshman</option>
                                     <option value="sophomore">Sophomore</option>
                                     <option value="junior">Junior</option>
@@ -120,19 +122,19 @@
                             </div>
                             <div class="column">
                                 <label for="playerhometown">Hometown/High School: </label>
-                                <input type="text" name="playerhometown" id="playerhometown" required>
+                                <input type="text" class="form-control" name="playerhometown" id="playerhometown" required>
                             </div>
                             <div class="column">
                                 <label for="country">Country: </label>
-                                <input type="text" name="country" id="country" required>
+                                <input type="text" class="form-control" name="country" id="country" required>
                             </div>
+                            <button class="btn btn-primary w-100" type="submit">Submit</button>
                         </div>
-                        <button class="btn btn-primary" type="submit">Submit</button>
                     </div>                
                 </form>
 
                 <div id="deletePlayer" style="display:none;">
-                    {{#each items}}
+                    {{#each playerList}}
                         <form action="/admin" method="post" class="delete-form">
                             <input type="hidden" name="post_type" value="delete_player">
                             <input type="hidden" name="playerId" value="{{id}}">
@@ -149,7 +151,7 @@
                                 <p>Hometown Highschool: {{hometown_highschool}}</p>
                                 <p>Country Code: {{country_code}}</p>
                                 
-                                <button type="submit" class="btn btn-danger">Delete</button>
+                                <button type="submit" class="btn btn-danger w-100">Delete</button>
                             </div>
                         </form>
                     {{/each}}
@@ -162,25 +164,25 @@
                             <h1>Create a New User</h1>
                             <div class="column">
                                 <label for="userEmail">User Email: </label>
-                                <input type="email" name="userEmail" id="userEmail" required>
+                                <input type="email" class="form-control" name="userEmail" id="userEmail" required>
                             </div>
                             <div class="column">
                                 <label for="userName">Username: </label>
-                                <input type="text" name="userName" id="userName" required>
+                                <input type="text" class="form-control" name="userName" id="userName" required>
                             </div>
                             <div class="column">
                                 <label for="password">Password: </label>
-                                <input type="text" name="password" id="password" required>
+                                <input type="text" class="form-control" name="password" id="password" required>
                             </div>
                             <div class="column">
                                 <label for="auth">User Auth Level: </label>
-                                <select id="auth" name="auth">
+                                <select id="auth" class="form-control" name="auth">
                                     <option value="user" selected>User</option>
                                     <option value="admin">Admin</option>
                                 </select>
                             </div>
+                            <button class="btn btn-primary w-100" type="submit">Submit</button>
                         </div>
-                        <button class="btn btn-primary" type="submit">Submit</button>
                     </div>
                 </form>
 
@@ -222,7 +224,7 @@
                 </form> --}}
 
                 <div id="deleteUser" style="display:none;">
-                    {{#each items}}
+                    {{#each userList}}
                         <form action="/admin" method="post" class="delete-form">
                             <input type="hidden" name="post_type" value="delete_user">
                             <input type="hidden" name="userEmail" value="{{email}}">
@@ -234,7 +236,7 @@
                                 <p>Authentication: {{auth}}</p>
                                 <p>ID: {{id}}</p>
                                 
-                                <button type="submit" class="btn btn-danger">Delete</button>
+                                <button type="submit" class="btn btn-danger w-100">Delete</button>
                             </div>
                         </form>
                     {{/each}}
@@ -242,12 +244,44 @@
                 
 
 
-                    {{!-- CREATE EVENT SECTION --}}
-                    <form action="/admin" method="post">
-                        <input type="hidden" name="post_type" value="create_event">
-                        <div id="newCalendar" style="display:none;">
+                {{!-- CREATE EVENT SECTION --}}
+                <form action="/admin" method="post">
+                    <input type="hidden" name="post_type" value="create_event">
+                    <div id="newCalendar" style="display:none;">
                         <h1>Add Calendar Event</h1>
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <div class="column">
+                            <label for="title">Event Title: </label>
+                            <input type="text" id="title" name="title" class="form-control">
+                        </div>
+                        <div class="column">
+                            <label for="start">Event Start Date: </label>
+                            <input type="text" id="start" name="start" value="{{sampleEvent.start}}">
+                        </div>
+
+                        <div class="column">
+                            <label for="end">Event End Date: </label>
+                            <input type="text" id="end" name="end" value="{{sampleEvent.end}}">
+                        </div>
+
+                        <script>
+                            // Initialize Flatpickr on the #start input
+                            flatpickr("#start", {
+                                dateFormat: "Y-m-d",  // This matches your date format (YYYY-MM-DD)
+                                defaultDate: "{{sampleEvent.start}}",  // Set the default date if needed
+                                altInput: true,  // Optional: show a more readable format in the input field
+                                altFormat: "F j, Y"  // Optional: the format shown to the user (e.g., November 1, 2023)
+                            });
+                            
+                            // Initialize Flatpickr for the end date
+                            flatpickr("#end", {
+                                dateFormat: "Y-m-d",  // Set the format to YYYY-MM-DD
+                                defaultDate: "{{sampleEvent.end}}",  // Set the default end date
+                                altInput: true,  // Optional: show a more readable format in the input field
+                                altFormat: "F j, Y",  // Optional: the format shown to the user
+                                minDate: "#start",  // Ensure the end date is not earlier than the start date
+                            });
+                        </script>
+                        <button class="btn btn-primary w-100" type="submit">Submit</button>
                     </div>
                 </form>
             </div>

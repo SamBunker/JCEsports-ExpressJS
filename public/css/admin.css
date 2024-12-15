@@ -37,3 +37,12 @@ th {
 tr:hover {
     background-color:#AC9C66;
 }
+
+.user-item > button {
+    margin-bottom: 3em;
+}
+
+.column {
+    padding: 0.3em 0 0.3em 0;
+}
+
