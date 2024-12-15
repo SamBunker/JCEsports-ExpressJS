@@ -9,6 +9,7 @@
     "express": "^4.18.2",
     "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
+    "flatpickr": "^4.6.13",
     "fullcalendar": "^6.1.10",
     "handlebars": "^4.7.8",
     "mysql": "^2.18.1",
