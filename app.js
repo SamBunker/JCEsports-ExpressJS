@@ -1,7 +1,7 @@
 const express = require('express');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
-const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, deleteUserFromDB, getUserFromDB, getCalendar, addOrUpdateCalendarEvent } = require('./dynamo');
+const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, deleteUserFromDB, getCalendar, deleteEvent, addOrUpdateCalendarEvent } = require('./dynamo');
 const bcrypt = require('bcrypt');
 
 // TODO: Randomize salt rounds
@@ -70,19 +70,20 @@ app.get('/json_calendar', async (req, res) => {
 app.get('/admin', isUserValid, hasAuth, async (req, res) => {
     const actionFeedback = req.session.actionFeedback || null;
     req.session.actionFeedback = null;
+    const isLoggedIn = req.session.user ? true : false;
 
     try {
         // Fetch Players from List
         const players = await getStudents();
         const playerList = players["Items"];
 
-
+        // Fetch Calendar events
+        const calEvents = await getCalendar();
 
         const users = await getUsers();
         const userList = users["Items"];
         const template = req.path.slice(1);
-        res.render(template, {userList, playerList, actionFeedback})
-        // res.json(users);
+        res.render(template, {userList, playerList, calEvents, actionFeedback, isLoggedIn})
     } catch (error) {
         console.error(err);
         res.status(500).json({err: 'Something went wrong'});
@@ -169,7 +170,7 @@ function renderTemplate(req, res) {
     res.render(template, { isLoggedIn });
 }
 
-app.get('/admin', isUserValid, hasAuth, renderTemplate);
+// app.get('/admin', isUserValid, hasAuth, renderTemplate);
 // app.get('/teamlist', renderTemplate);
 app.get('/about', renderTemplate);
 app.get('/register', renderTemplate);
@@ -319,20 +320,39 @@ app.post('/admin', isUserValid, hasAuth, async (req, res) => {
         const newEvent = {
             id: uuidv4(),
             title: eventTitle,
-            start: sanitizeInput(req.body.start),
-            end: sanitizeInput(req.body.end)
+            start: req.body.start,
+            end: req.body.end
         }
         try {
             addOrUpdateCalendarEvent(newEvent);
-            console.log(`Successfully Deleted Player: ${eventTitle}`);
-            req.session.actionFeedback = {error: `Successfully Deleted Player: ${eventTitle}`, refresh: "You may need to refresh."};
+            console.log(`Successfully Created Event: ${eventTitle}`);
+            req.session.actionFeedback = {error: `Successfully Created Event: ${eventTitle}`, refresh: "You may need to refresh."};
             res.redirect('/admin');
         } catch (error) {
             console.error(error);
-            console.log(`Successfully Deleted Player: ${eventTitle}`);
-            req.session.actionFeedback = {error: `Successfully Deleted Player: ${eventTitle}`, refresh: "You may need to refresh."};
+            console.log(`Failed to Create Event: ${eventTitle}`);
+            req.session.actionFeedback = {error: `Failed to Create Event: ${eventTitle}`, refresh: "You may need to refresh."};
             res.redirect('/admin');
         }
+
+    } else if (post_type == "delete_event" && req.body.eventId && req.body.eventTitle && req.body.eventStart) {
+        const eventId = req.body.eventId;
+        const eventTitle = req.body.eventTitle;
+        const start = req.body.eventStart;
+
+        try {
+            await deleteEvent(eventId, start);
+            console.log(`Successfully Deleted Event: ${eventTitle}`);
+            req.session.actionFeedback = {error: `Successfully Deleted Event: ${eventTitle}`, refresh: "You may need to refresh."};
+            res.redirect('/admin');
+        } catch (error) {
+            console.error(error);
+            console.error(error.__type);
+            console.log(`Failed to Delete Event: ${eventTitle}`);
+            req.session.actionFeedback = {error: `Failed to Deleted Event: ${eventTitle}`, refresh: "You may need to refresh."};
+            res.redirect('/admin');
+        }
+
 
     } else if (post_type == "delete_player" && req.body.playerId) {
         const playerId = req.body.playerId;

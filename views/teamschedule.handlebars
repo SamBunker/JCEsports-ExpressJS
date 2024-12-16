@@ -12,12 +12,17 @@
             interactive: true,
             events: '/json_calendar',
             eventClick: function(info) {
-              alert('ID: ' + info.event.id + '\n' + 'Title: ' + info.event.title + '\n' + 'Start: ' + info.event.start);
+              alert('Title: ' + info.event.title + '\n' + 'Start: ' + info.event.start + '\n' + 'End: ' + info.event.end);
               //alert('Start Time: ' + info.event.start);
               //$('#modalID').html(info.event.id);
               //$('#modalTitle').html(info.event.title);
               //$('#fullCalModal').show();
               //https:codepen.io/anon/pen/eapjWN?editors=1010
+            },
+            eventTimeFormat: { // Customize time format
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: 'short', // Use 'AM/PM'
             },
         });
         calendar.render()

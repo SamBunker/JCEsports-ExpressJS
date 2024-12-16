@@ -118,6 +118,7 @@
                                     <option value="junior">Junior</option>
                                     <option value="senior">Senior</option>
                                     <option value="postgrad">Post-Graduate</option>
+                                    <option value="postgrad">Alumni</option>
                                 </select>
                             </div>
                             <div class="column">
@@ -241,8 +242,26 @@
                         </form>
                     {{/each}}
                 </div>
-                
 
+                <div id="deleteCalendar" style="display:none;">
+                    {{#each calEvents}}
+                        <form action="/admin" method="post" class="delete-form">
+                            <input type="hidden" name="post_type" value="delete_event">
+                            <input type="hidden" name="eventTitle" value="{{title}}">
+                            <input type="hidden" name="eventId" value="{{id}}">
+                            <input type="hidden" name="eventStart" value="{{start}}">
+
+                            <div class="user-item">
+                                <h3>{{title}}</h3>
+                                <p>ID: {{id}}</p>
+                                <p>Start: {{start}}</p>
+                                <p>End: {{end}}</p>
+                                
+                                <button type="submit" class="btn btn-danger w-100">Delete</button>
+                            </div>
+                        </form>
+                    {{/each}}
+                </div>
 
                 {{!-- CREATE EVENT SECTION --}}
                 <form action="/admin" method="post">
@@ -266,19 +285,23 @@
                         <script>
                             // Initialize Flatpickr on the #start input
                             flatpickr("#start", {
-                                dateFormat: "Y-m-d",  // This matches your date format (YYYY-MM-DD)
+                                dateFormat: "Y-m-dTH:i:ss",  // This matches your date format (YYYY-MM-DD)
                                 defaultDate: "{{sampleEvent.start}}",  // Set the default date if needed
                                 altInput: true,  // Optional: show a more readable format in the input field
-                                altFormat: "F j, Y"  // Optional: the format shown to the user (e.g., November 1, 2023)
+                                altFormat: "F j, Y",  // Optional: the format shown to the user (e.g., November 1, 2023)
+                                enableTime: true,
+                                time_24hr: false
                             });
                             
                             // Initialize Flatpickr for the end date
                             flatpickr("#end", {
-                                dateFormat: "Y-m-d",  // Set the format to YYYY-MM-DD
+                                dateFormat: "Y-m-dTH:i:ss",  // Set the format to YYYY-MM-DD
                                 defaultDate: "{{sampleEvent.end}}",  // Set the default end date
                                 altInput: true,  // Optional: show a more readable format in the input field
                                 altFormat: "F j, Y",  // Optional: the format shown to the user
                                 minDate: "#start",  // Ensure the end date is not earlier than the start date
+                                enableTime: true,
+                                time_24hr: false
                             });
                         </script>
                         <button class="btn btn-primary w-100" type="submit">Submit</button>

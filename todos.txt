@@ -1,24 +1,5 @@
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Add the ability to close user registration - Admin Panel
 Add a date picker to calendar event creation - Admin Panel
 Polish ability to add people to teams. Add images, etc.
@@ -41,3 +22,5 @@ Create website configuration file
 
 Make sure posting and getting has checks for user auth
 ..."/admin", isUserValid, hasAuth, async (req, res)...
+
+Add increment at the end of the year for people's "grade" so we don't have to increment each player

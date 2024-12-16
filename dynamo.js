@@ -10,7 +10,7 @@ AWS.config.update({
 const dynamoClient = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = "jcesports-db";
 const LOGIN_TABLE = 'jcesports-db-users'
-const CALENDAR_TABLE = 'jcesports-db-calendar'
+const CALENDAR_TABLE = 'jcesports-db-calendar-events'
 
 const getStudents = async () => {
     const params = {
@@ -26,6 +26,17 @@ const getCalendar = async () => {
     };
     const events = await dynamoClient.scan(params).promise();
     return events["Items"]
+}
+
+const deleteEvent = async (id, start) => {
+    const params = {
+        TableName: CALENDAR_TABLE,
+        Key: {
+            id: id,
+            start: start,
+        }
+    };
+    return await dynamoClient.delete(params).promise();
 }
 
 const addOrUpdateCalendarEvent = async (event) => {
@@ -71,15 +82,15 @@ const deleteUserFromDB = async (email, id) => {
     }
 };
 
-const getUserFromDB = async (email) => {
-    const params = {
-        TableName: 'LOGIN_TABLE',
-        Key: {
-            email
-        }
-    }
-    return await dynamoClient.get(params).promise();
-};
+// const getUserFromDB = async (email) => {
+//     const params = {
+//         TableName: 'LOGIN_TABLE',
+//         Key: {
+//             email
+//         }
+//     }
+//     return await dynamoClient.get(params).promise();
+// };
 
 const addOrUpdateRegistration = async (array) => {
     const params = {
@@ -138,7 +149,7 @@ module.exports = {
     addOrUpdateRegistration,
     getUsers,
     deleteUserFromDB,
-    getUserFromDB,
     getCalendar,
+    deleteEvent,
     addOrUpdateCalendarEvent
 };
