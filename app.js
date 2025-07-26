@@ -2,6 +2,8 @@ const express = require('express');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
 const { getStudents, getStudentById, addOrUpdateStudent, deleteStudent, checkIfEmail, addOrUpdateRegistration, getUsers, deleteUserFromDB, getCalendar, deleteEvent, addOrUpdateCalendarEvent } = require('./dynamo');
+const calendarService = require('./services/calendar-service');
+const inviteService = require('./services/invite-service');
 const bcrypt = require('bcrypt');
 
 // TODO: Randomize salt rounds
@@ -16,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(express.json());
 const crypto = require('crypto');
+//bcrypt
 const secretKey = crypto.randomBytes(32).toString('hex');
 
 // Render Engines
@@ -50,6 +53,308 @@ app.get('/json_calendar', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({err: 'Something went wrong'});
+    }
+})
+
+// Enhanced calendar endpoint for new event system
+app.get('/api/events', async (req, res) => {
+    try {
+        const user = req.session.user;
+        const includePrivate = user && user.auth === 'admin';
+        
+        const result = await calendarService.getEventsForCalendar(user?.id, includePrivate);
+        
+        if (result.success && !result.shouldFallback && result.events.length > 0) {
+            // New system has events, use them
+            res.json(result.events);
+        } else {
+            // Fall back to old calendar system
+            console.log('Falling back to old calendar system');
+            try {
+                const oldEvents = await getCalendar();
+                res.json(oldEvents || []);
+            } catch (fallbackError) {
+                console.error('Old calendar system also failed:', fallbackError);
+                // Return empty array rather than error to keep calendar working
+                res.json([]);
+            }
+        }
+    } catch (error) {
+        console.error('Error getting calendar events:', error);
+        // Final fallback to old system
+        try {
+            const oldEvents = await getCalendar();
+            res.json(oldEvents || []);
+        } catch (fallbackError) {
+            console.error('All calendar systems failed:', fallbackError);
+            res.json([]); // Return empty array to keep calendar working
+        }
+    }
+})
+
+// User dashboard route
+app.get('/dashboard', isUserValid, async (req, res) => {
+    try {
+        const user = req.session.user;
+        const isLoggedIn = true;
+        
+        // Get user's events and invitations with fallback
+        let userEvents = { success: true, events: [] };
+        let userInvitations = { success: true, invitations: [] };
+        
+        try {
+            userEvents = await calendarService.getEventsByUser(user.id);
+        } catch (error) {
+            console.log('User events not available:', error.message);
+        }
+        
+        try {
+            userInvitations = await inviteService.getUserInvitations(user.email);
+        } catch (error) {
+            console.log('User invitations not available:', error.message);
+        }
+
+        const template = req.path.slice(1);
+        res.render(template, { 
+            isLoggedIn,
+            user,
+            userEvents: userEvents.success ? userEvents.events : [],
+            userInvitations: userInvitations.success ? userInvitations.invitations : []
+        });
+    } catch (error) {
+        console.error('Error loading dashboard:', error);
+        res.status(500).render('500');
+    }
+})
+
+// Create event routes
+app.get('/create-event', isUserValid, (req, res) => {
+    const isLoggedIn = req.session.user ? true : false;
+    const template = req.path.slice(1);
+    res.render(template, { isLoggedIn });
+});
+
+app.post('/create-event', isUserValid, async (req, res) => {
+    try {
+        const user = req.session.user;
+        const eventData = {
+            title: sanitizeInput(req.body.title),
+            description: sanitizeInput(req.body.description),
+            start_date: req.body.start_date,
+            end_date: req.body.end_date,
+            location: sanitizeInput(req.body.location),
+            is_public: req.body.is_public === 'true',
+            max_attendees: req.body.max_attendees ? parseInt(req.body.max_attendees) : null
+        };
+
+        const result = await calendarService.createEvent(eventData, user);
+        
+        if (result.success) {
+            // Send invitations if provided
+            if (req.body.invitees && req.body.invitees.trim()) {
+                const inviteeList = req.body.invitees.split(',').map(email => email.trim());
+                await inviteService.createInvitations(result.event.id, result.event.created_at, inviteeList, user);
+            }
+            
+            req.session.actionFeedback = {error: `Event "${result.event.title}" created successfully!`, refresh: "You may need to refresh."};
+            res.redirect('/dashboard');
+        } else {
+            res.render('create-event', { 
+                isLoggedIn: true,
+                errors: result.errors || [result.error]
+            });
+        }
+    } catch (error) {
+        console.error('Error creating event:', error);
+        res.status(500).render('500');
+    }
+})
+
+// Event details route - dynamic for both old and new events
+app.get('/events/:id', async (req, res) => {
+    try {
+        const eventId = req.params.id;
+        const user = req.session.user;
+        const isLoggedIn = !!user;
+        
+        // First, try to get event from new system
+        let eventData = null;
+        let isNewEvent = false;
+        
+        try {
+            // Try new events table (this will fail if table doesn't exist or event not found)
+            // Convert string ID to number for new system
+            const numericEventId = parseInt(eventId);
+            if (!isNaN(numericEventId)) {
+                const result = await calendarService.getEventDetails(numericEventId, '');
+                if (result.success) {
+                    eventData = result;
+                    isNewEvent = true;
+                }
+            }
+        } catch (error) {
+            console.log('Event not found in new system, trying old system');
+        }
+        
+        // If not found in new system, try old calendar system
+        if (!eventData) {
+            try {
+                const oldEvents = await getCalendar();
+                const oldEvent = oldEvents.find(event => event.id === eventId);
+                
+                if (oldEvent) {
+                    // Convert old event to new format for display
+                    eventData = {
+                        success: true,
+                        event: {
+                            id: oldEvent.id,
+                            title: oldEvent.title,
+                            start_date: oldEvent.start,
+                            end_date: oldEvent.end,
+                            description: '',
+                            location: '',
+                            organizer_email: 'Unknown',
+                            is_public: true,
+                            created_at: oldEvent.start
+                        },
+                        invitations: [],
+                        rsvps: [],
+                        rsvpSummary: { accept: 0, maybe: 0, decline: 0, no_response: 0, total: 0 },
+                        totalInvited: 0
+                    };
+                    isNewEvent = false;
+                }
+            } catch (error) {
+                console.error('Error getting old event:', error);
+            }
+        }
+        
+        if (eventData && eventData.success) {
+            const template = 'event-details';
+            res.render(template, { 
+                isLoggedIn,
+                event: eventData.event,
+                invitations: eventData.invitations || [],
+                rsvps: eventData.rsvps || [],
+                rsvpSummary: eventData.rsvpSummary || { accept: 0, maybe: 0, decline: 0, no_response: 0, total: 0 },
+                totalInvited: eventData.totalInvited || 0,
+                canManage: user && isNewEvent && calendarService.canUserManageEvent(eventData.event, user),
+                isOldEvent: !isNewEvent
+            });
+        } else {
+            res.status(404).render('404');
+        }
+    } catch (error) {
+        console.error('Error getting event details:', error);
+        res.status(500).render('500');
+    }
+})
+
+// RSVP handling routes
+app.get('/rsvp/:invitationId/:eventId', async (req, res) => {
+    try {
+        const { invitationId, eventId } = req.params;
+        const response = req.query.response; // accept, maybe, decline
+        
+        if (response && ['accept', 'maybe', 'decline'].includes(response)) {
+            // Process the RSVP directly
+            const result = await inviteService.processRSVP(invitationId, eventId, response);
+            
+            if (result.success) {
+                res.render('invite-response', {
+                    success: true,
+                    message: result.message,
+                    response: response
+                });
+            } else {
+                res.render('invite-response', {
+                    success: false,
+                    error: result.error
+                });
+            }
+        } else {
+            // Show RSVP form
+            res.render('invite-response', {
+                invitationId: invitationId,
+                eventId: eventId,
+                showForm: true
+            });
+        }
+    } catch (error) {
+        console.error('Error handling RSVP:', error);
+        res.status(500).render('500');
+    }
+})
+
+app.post('/rsvp/:invitationId/:eventId', async (req, res) => {
+    try {
+        const { invitationId, eventId } = req.params;
+        const { response, notes, responder_name } = req.body;
+        
+        const result = await inviteService.processRSVP(
+            invitationId, 
+            eventId, 
+            response, 
+            notes,
+            { name: sanitizeInput(responder_name) }
+        );
+        
+        if (result.success) {
+            res.render('invite-response', {
+                success: true,
+                message: result.message,
+                response: response
+            });
+        } else {
+            res.render('invite-response', {
+                success: false,
+                error: result.error,
+                invitationId: invitationId,
+                eventId: eventId,
+                showForm: true
+            });
+        }
+    } catch (error) {
+        console.error('Error processing RSVP:', error);
+        res.status(500).render('500');
+    }
+})
+
+// API endpoint for sending invitations
+app.post('/api/send-invitations', isUserValid, isEventOrganizer, async (req, res) => {
+    try {
+        const user = req.session.user;
+        const { eventId, createdAt, invitees } = req.body;
+        
+        const inviteeList = Array.isArray(invitees) ? invitees : invitees.split(',').map(email => email.trim());
+        
+        const result = await inviteService.createInvitations(eventId, createdAt, inviteeList, user);
+        
+        if (result.success) {
+            res.json(result);
+        } else {
+            res.status(400).json(result);
+        }
+    } catch (error) {
+        console.error('Error sending invitations:', error);
+        res.status(500).json({error: 'Failed to send invitations'});
+    }
+})
+
+// API endpoint for RSVP summary
+app.get('/api/events/:eventId/rsvp-summary', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const result = await inviteService.getEventRSVPSummary(eventId);
+        
+        if (result.success) {
+            res.json(result);
+        } else {
+            res.status(500).json(result);
+        }
+    } catch (error) {
+        console.error('Error getting RSVP summary:', error);
+        res.status(500).json({error: 'Failed to get RSVP summary'});
     }
 })
 
@@ -316,22 +621,61 @@ app.post('/admin', isUserValid, hasAuth, async (req, res) => {
 
     } else if ( post_type == "create_event" ) {
         const eventTitle = req.body.title;
+        const user = req.session.user;
 
-        const newEvent = {
-            id: uuidv4(),
+        const eventData = {
             title: eventTitle,
+            description: sanitizeInput(req.body.description) || '',
+            start_date: req.body.start,
+            end_date: req.body.end,
+            location: sanitizeInput(req.body.location) || '',
+            is_public: req.body.is_public === 'true',
+            max_attendees: req.body.max_attendees ? parseInt(req.body.max_attendees) : null
+        };
+        
+        console.log('Admin form data received:', {
+            title: eventTitle,
+            description: req.body.description,
             start: req.body.start,
-            end: req.body.end
-        }
+            end: req.body.end,
+            location: req.body.location,
+            is_public: req.body.is_public,
+            max_attendees: req.body.max_attendees
+        });
+
         try {
-            addOrUpdateCalendarEvent(newEvent);
-            console.log(`Successfully Created Event: ${eventTitle}`);
-            req.session.actionFeedback = {error: `Successfully Created Event: ${eventTitle}`, refresh: "You may need to refresh."};
+            const result = await calendarService.createEvent(eventData, user);
+            if (result.success) {
+                // Send invitations if provided
+                if (req.body.invitees && req.body.invitees.trim()) {
+                    try {
+                        const inviteeList = req.body.invitees.split(',').map(email => email.trim());
+                        const inviteResult = await inviteService.createInvitations(result.event.id, result.event.created_at, inviteeList, user);
+                        
+                        if (inviteResult.success) {
+                            console.log(`Successfully Created Event: ${eventTitle} and sent ${inviteResult.emailsSent || 0} invitations`);
+                            req.session.actionFeedback = {error: `Successfully Created Event: ${eventTitle} and sent ${inviteResult.emailsSent || 0} invitations`, refresh: "You may need to refresh."};
+                        } else {
+                            console.log(`Event created but failed to send invitations: ${inviteResult.error}`);
+                            req.session.actionFeedback = {error: `Event created successfully but failed to send invitations: ${inviteResult.error}`, refresh: "You may need to refresh."};
+                        }
+                    } catch (inviteError) {
+                        console.error('Error sending invitations:', inviteError);
+                        req.session.actionFeedback = {error: `Event created successfully but failed to send invitations`, refresh: "You may need to refresh."};
+                    }
+                } else {
+                    console.log(`Successfully Created Event: ${eventTitle}`);
+                    req.session.actionFeedback = {error: `Successfully Created Event: ${eventTitle}`, refresh: "You may need to refresh."};
+                }
+            } else {
+                console.log(`Failed to Create Event: ${eventTitle}`, result.error);
+                req.session.actionFeedback = {error: `Failed to Create Event: ${eventTitle} - ${result.error}`, refresh: "You may need to refresh."};
+            }
             res.redirect('/admin');
         } catch (error) {
-            console.error(error);
+            console.error('Error in admin event creation:', error);
             console.log(`Failed to Create Event: ${eventTitle}`);
-            req.session.actionFeedback = {error: `Failed to Create Event: ${eventTitle}`, refresh: "You may need to refresh."};
+            req.session.actionFeedback = {error: `Failed to Create Event: ${eventTitle} - ${error.message}`, refresh: "You may need to refresh."};
             res.redirect('/admin');
         }
 
@@ -491,6 +835,28 @@ function hasAuth(req, res, next) {
     } catch (error) {
         console.error(error.message, req.session.user.email);
         res.status(401).redirect('/');
+    }
+}
+
+// Check if user can manage a specific event
+function isEventOrganizer(req, res, next) {
+    try {
+        const user = req.session.user;
+        if (!user) {
+            throw new Error("No user session");
+        }
+        
+        // Admin can manage any event
+        if (user.auth === "admin") {
+            next();
+            return;
+        }
+        
+        // Event organizer can manage their events (checked in service layer)
+        next();
+    } catch (error) {
+        console.error("Event authorization error:", error.message);
+        res.status(401).redirect('/login');
     }
 }
 

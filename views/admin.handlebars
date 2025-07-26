@@ -267,44 +267,87 @@
                 <form action="/admin" method="post">
                     <input type="hidden" name="post_type" value="create_event">
                     <div id="newCalendar" style="display:none;">
-                        <h1>Add Calendar Event</h1>
-                        <div class="column">
-                            <label for="title">Event Title: </label>
-                            <input type="text" id="title" name="title" class="form-control">
+                        <h1>Add Enhanced Calendar Event</h1>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="column mb-3">
+                                    <label for="title">Event Title: <span class="text-danger">*</span></label>
+                                    <input type="text" id="title" name="title" class="form-control" required>
+                                </div>
+                                <div class="column mb-3">
+                                    <label for="description">Description:</label>
+                                    <textarea id="description" name="description" class="form-control" rows="3" placeholder="Optional event description"></textarea>
+                                </div>
+                                <div class="column mb-3">
+                                    <label for="location">Location:</label>
+                                    <input type="text" id="location" name="location" class="form-control" placeholder="Event location (optional)">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="column mb-3">
+                                    <label for="start">Event Start Date: <span class="text-danger">*</span></label>
+                                    <input type="text" id="start" name="start" class="form-control" required>
+                                </div>
+                                <div class="column mb-3">
+                                    <label for="end">Event End Date: <span class="text-danger">*</span></label>
+                                    <input type="text" id="end" name="end" class="form-control" required>
+                                </div>
+                                <div class="column mb-3">
+                                    <label for="max_attendees">Max Attendees:</label>
+                                    <input type="number" id="max_attendees" name="max_attendees" class="form-control" min="1" placeholder="Leave blank for unlimited">
+                                </div>
+                                <div class="column mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="is_public" name="is_public" value="true" class="form-check-input" checked>
+                                        <label for="is_public" class="form-check-label">Public Event</label>
+                                        <small class="form-text text-muted">Uncheck to make this event private</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="column">
-                            <label for="start">Event Start Date: </label>
-                            <input type="text" id="start" name="start" value="{{sampleEvent.start}}">
-                        </div>
-
-                        <div class="column">
-                            <label for="end">Event End Date: </label>
-                            <input type="text" id="end" name="end" value="{{sampleEvent.end}}">
+                        <div class="column mb-3">
+                            <label for="invitees">Send Invitations To (Optional):</label>
+                            <textarea id="invitees" name="invitees" class="form-control" rows="2" placeholder="Enter email addresses separated by commas (e.g., student1@juniata.edu, student2@juniata.edu)"></textarea>
+                            <small class="form-text text-muted">Leave blank to create event without sending invitations</small>
                         </div>
 
                         <script>
                             // Initialize Flatpickr on the #start input
-                            flatpickr("#start", {
-                                dateFormat: "Y-m-dTH:i:ss",  // This matches your date format (YYYY-MM-DD)
-                                defaultDate: "{{sampleEvent.start}}",  // Set the default date if needed
-                                altInput: true,  // Optional: show a more readable format in the input field
-                                altFormat: "F j, Y",  // Optional: the format shown to the user (e.g., November 1, 2023)
+                            const startPicker = flatpickr("#start", {
+                                dateFormat: "Y-m-d\\TH:i:S",  // ISO format for new system
+                                defaultDate: new Date(),  // Set to current date/time
+                                altInput: true,  // Show readable format to user
+                                altFormat: "F j, Y at h:i K",  // November 1, 2023 at 2:30 PM
                                 enableTime: true,
-                                time_24hr: false
+                                time_24hr: false,
+                                minuteIncrement: 15,
+                                onChange: function(selectedDates, dateStr, instance) {
+                                    // Update end date minimum to be at least 15 minutes after start
+                                    if (selectedDates[0]) {
+                                        const minEndDate = new Date(selectedDates[0].getTime() + 15*60*1000);
+                                        endPicker.set('minDate', minEndDate);
+                                        // If end date is before new minimum, update it
+                                        if (endPicker.selectedDates[0] && endPicker.selectedDates[0] <= selectedDates[0]) {
+                                            endPicker.setDate(new Date(selectedDates[0].getTime() + 60*60*1000)); // 1 hour after start
+                                        }
+                                    }
+                                }
                             });
                             
                             // Initialize Flatpickr for the end date
-                            flatpickr("#end", {
-                                dateFormat: "Y-m-dTH:i:ss",  // Set the format to YYYY-MM-DD
-                                defaultDate: "{{sampleEvent.end}}",  // Set the default end date
-                                altInput: true,  // Optional: show a more readable format in the input field
-                                altFormat: "F j, Y",  // Optional: the format shown to the user
-                                minDate: "#start",  // Ensure the end date is not earlier than the start date
+                            const endPicker = flatpickr("#end", {
+                                dateFormat: "Y-m-d\\TH:i:S",  // ISO format for new system
+                                defaultDate: new Date(Date.now() + 2*60*60*1000),  // 2 hours from now
+                                altInput: true,
+                                altFormat: "F j, Y at h:i K",
                                 enableTime: true,
-                                time_24hr: false
+                                time_24hr: false,
+                                minuteIncrement: 15,
+                                minDate: new Date(Date.now() + 15*60*1000)  // At least 15 minutes from now
                             });
                         </script>
-                        <button class="btn btn-primary w-100" type="submit">Submit</button>
+                        <button class="btn btn-primary w-100" type="submit">Create Enhanced Event</button>
+                        <small class="form-text text-muted mt-2">This event will be created with full invite/RSVP functionality and will appear immediately on the calendar.</small>
                     </div>
                 </form>
             </div>

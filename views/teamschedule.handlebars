@@ -10,14 +10,22 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             interactive: true,
-            events: '/json_calendar',
+            events: '/api/events', // Use new enhanced API endpoint
             eventClick: function(info) {
-              alert('Title: ' + info.event.title + '\n' + 'Start: ' + info.event.start + '\n' + 'End: ' + info.event.end);
-              //alert('Start Time: ' + info.event.start);
-              //$('#modalID').html(info.event.id);
-              //$('#modalTitle').html(info.event.title);
-              //$('#fullCalModal').show();
-              //https:codepen.io/anon/pen/eapjWN?editors=1010
+              // Enhanced event click with link to event details
+              if (info.event.id) {
+                window.location.href = '/events/' + info.event.id;
+              } else {
+                alert('Title: ' + info.event.title + '\n' + 'Start: ' + info.event.start + '\n' + 'End: ' + info.event.end);
+              }
+            },
+            dateClick: function(info) {
+              // Allow creating events on date click (if logged in)
+              {{#if isLoggedIn}}
+                if (confirm('Create a new event for ' + info.dateStr + '?')) {
+                  window.location.href = '/create-event?date=' + info.dateStr;
+                }
+              {{/if}}
             },
             eventTimeFormat: { // Customize time format
                 hour: '2-digit',

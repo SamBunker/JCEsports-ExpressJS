@@ -1,0 +1,82 @@
+<head>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<div class="nav-block"></div>
+    <div class="container">
+        <div class="col">
+            {{#if success}}
+                <!-- Successful RSVP Response -->
+                <div class="text-center">
+                    <div class="alert alert-success">
+                        <h4>
+                            {{#eq response 'accept'}}✅ Thank you for accepting!{{/eq}}
+                            {{#eq response 'maybe'}}❓ Thank you for your response!{{/eq}}
+                            {{#eq response 'decline'}}❌ Thank you for letting us know.{{/eq}}
+                        </h4>
+                        <p>{{message}}</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="/teamschedule" class="btn btn-primary">View Calendar</a>
+                        {{#if isLoggedIn}}
+                            <a href="/dashboard" class="btn btn-outline-secondary">My Dashboard</a>
+                        {{/if}}
+                    </div>
+                </div>
+            {{else}}
+                {{#if showForm}}
+                    <!-- RSVP Form -->
+                    <h4>Event Invitation Response</h4>
+                    
+                    {{#if error}}
+                        <div class="alert alert-danger">
+                            {{error}}
+                        </div>
+                    {{/if}}
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Please respond to this invitation:</h5>
+                            <form action="/rsvp/{{invitationId}}/{{eventId}}" method="post">
+                                <div class="mb-3">
+                                    <label class="form-label">Your Response:</label>
+                                    <div class="btn-group d-block" role="group">
+                                        <input type="radio" class="btn-check" name="response" id="accept" value="accept" required>
+                                        <label class="btn btn-outline-success" for="accept">✅ Yes, I'll attend</label>
+
+                                        <input type="radio" class="btn-check" name="response" id="maybe" value="maybe" required>
+                                        <label class="btn btn-outline-warning" for="maybe">❓ Maybe</label>
+
+                                        <input type="radio" class="btn-check" name="response" id="decline" value="decline" required>
+                                        <label class="btn btn-outline-danger" for="decline">❌ Can't make it</label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="responder_name" class="form-label">Your Name (optional)</label>
+                                    <input type="text" class="form-control" name="responder_name" id="responder_name">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">Notes (optional)</label>
+                                    <textarea class="form-control" name="notes" id="notes" rows="3" 
+                                        placeholder="Any additional comments or questions..."></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Submit Response</button>
+                            </form>
+                        </div>
+                    </div>
+                {{else}}
+                    <!-- Error State -->
+                    <div class="alert alert-danger text-center">
+                        <h4>⚠️ Sorry, something went wrong</h4>
+                        <p>{{error}}</p>
+                        <a href="/teamschedule" class="btn btn-primary">View Calendar</a>
+                    </div>
+                {{/if}}
+            {{/if}}
+        </div>
+    </div>
+</body>

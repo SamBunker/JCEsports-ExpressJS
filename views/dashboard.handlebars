@@ -1,0 +1,82 @@
+<head>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<div class="nav-block"></div>
+    <div class="container">
+        <div class="col">
+            <h4>My Events Dashboard</h4>
+            <p>Welcome, {{user.username}}!</p>
+            
+            <!-- Quick Actions -->
+            <div class="mb-4">
+                <a href="/create-event" class="btn btn-primary">📅 Create New Event</a>
+                <a href="/teamschedule" class="btn btn-outline-secondary">🗓️ View Calendar</a>
+            </div>
+
+            <!-- My Events Section -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>My Events</h5>
+                        </div>
+                        <div class="card-body">
+                            {{#if userEvents}}
+                                {{#each userEvents}}
+                                    <div class="event-item mb-3 p-3 border rounded">
+                                        <h6><a href="/events/{{id}}">{{title}}</a></h6>
+                                        <p class="text-muted small mb-1">📅 {{start_date}}</p>
+                                        {{#if location}}<p class="text-muted small mb-1">📍 {{location}}</p>{{/if}}
+                                        <span class="badge badge-{{#if is_public}}success{{else}}warning{{/if}}">
+                                            {{#if is_public}}Public{{else}}Private{{/if}}
+                                        </span>
+                                    </div>
+                                {{/each}}
+                            {{else}}
+                                <p class="text-muted">You haven't created any events yet.</p>
+                                <a href="/create-event" class="btn btn-sm btn-primary">Create Your First Event</a>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Invitations Section -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>My Invitations</h5>
+                        </div>
+                        <div class="card-body">
+                            {{#if userInvitations}}
+                                {{#each userInvitations}}
+                                    <div class="invitation-item mb-3 p-3 border rounded">
+                                        <h6>{{event.title}}</h6>
+                                        <p class="text-muted small mb-1">📅 From: {{organizer_email}}</p>
+                                        <p class="text-muted small mb-2">📬 Sent: {{sent_at}}</p>
+                                        
+                                        {{#if rsvp}}
+                                            <span class="badge badge-{{#eq rsvp.response 'accept'}}success{{else}}{{#eq rsvp.response 'maybe'}}warning{{else}}danger{{/eq}}{{/eq}}">
+                                                {{#eq rsvp.response 'accept'}}✅ Attending{{/eq}}
+                                                {{#eq rsvp.response 'maybe'}}❓ Maybe{{/eq}}
+                                                {{#eq rsvp.response 'decline'}}❌ Not Attending{{/eq}}
+                                            </span>
+                                        {{else}}
+                                            <div>
+                                                <a href="/rsvp/{{id}}/{{event_id}}?response=accept" class="btn btn-sm btn-success">✅ Accept</a>
+                                                <a href="/rsvp/{{id}}/{{event_id}}?response=maybe" class="btn btn-sm btn-warning">❓ Maybe</a>
+                                                <a href="/rsvp/{{id}}/{{event_id}}?response=decline" class="btn btn-sm btn-danger">❌ Decline</a>
+                                            </div>
+                                        {{/if}}
+                                    </div>
+                                {{/each}}
+                            {{else}}
+                                <p class="text-muted">No invitations received yet.</p>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

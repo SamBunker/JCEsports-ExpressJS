@@ -1,0 +1,113 @@
+<head>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
+<div class="nav-block"></div>
+    <div class="container">
+        <div class="col">
+            <h4>Create New Event</h4>
+            
+            {{#if errors}}
+                <div class="alert alert-danger">
+                    <h5>Please fix the following errors:</h5>
+                    <ul>
+                        {{#each errors}}
+                            <li>{{this}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            {{/if}}
+
+            <form action="/create-event" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Event Title *</label>
+                            <input type="text" class="form-control" name="title" id="title" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" name="description" id="description" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location" id="location">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="max_attendees" class="form-label">Max Attendees (optional)</label>
+                            <input type="number" class="form-control" name="max_attendees" id="max_attendees" min="1">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Start Date & Time *</label>
+                            <input type="text" class="form-control" name="start_date" id="start_date" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">End Date & Time *</label>
+                            <input type="text" class="form-control" name="end_date" id="end_date" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_public" value="true" id="is_public" checked>
+                                <label class="form-check-label" for="is_public">
+                                    Make this event public (appears on main calendar)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="invitees" class="form-label">Invite People (optional)</label>
+                            <textarea class="form-control" name="invitees" id="invitees" rows="3" 
+                                placeholder="Enter email addresses separated by commas&#10;Example: student1@juniata.edu, student2@juniata.edu"></textarea>
+                            <div class="form-text">You can also send invitations later from the event details page.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">📅 Create Event</button>
+                        <a href="/dashboard" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Flatpickr date pickers
+        flatpickr("#start_date", {
+            dateFormat: "Y-m-dTH:i:S",
+            enableTime: true,
+            time_24hr: false,
+            altInput: true,
+            altFormat: "F j, Y at h:i K",
+            minDate: "today"
+        });
+        
+        flatpickr("#end_date", {
+            dateFormat: "Y-m-dTH:i:S",
+            enableTime: true,
+            time_24hr: false,
+            altInput: true,
+            altFormat: "F j, Y at h:i K",
+            minDate: "today"
+        });
+
+        // Auto-set end date when start date changes
+        document.getElementById('start_date').addEventListener('change', function() {
+            const startDate = new Date(this.value);
+            const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // Add 2 hours
+            document.getElementById('end_date')._flatpickr.setDate(endDate);
+        });
+    </script>
+</body>
